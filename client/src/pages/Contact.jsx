@@ -15,6 +15,7 @@ const services = [
 ];
 
 const budgets = ["Under ₹5,000", "₹5,000 - ₹15,000", "₹15,000 - ₹50,000", "₹50,000+"];
+const PHONE_REGEX = /^\+[1-9]\d{7,14}$/;
 
 const initialForm = { name: "", email: "", phone: "", service: "", budget: "", message: "" };
 
@@ -26,10 +27,22 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (form.phone.trim() && !PHONE_REGEX.test(form.phone.trim())) {
+      toast.error("Please enter your phone in international format, e.g. +916367276064.");
+      return;
+    }
+
     if (form.message.trim().length < 10) {
       toast.error("Please write a message of at least 10 characters.");
       return;
     }
+
+    if (form.message.trim().length > 5000) {
+      toast.error("Message cannot exceed 5000 characters.");
+      return;
+    }
+
     setSubmitting(true);
     try {
       const res = await api.post("/contact", form);
@@ -124,6 +137,7 @@ const Contact = () => {
                   id="name"
                   name="name"
                   required
+                  maxLength={100}
                   value={form.name}
                   onChange={handleChange}
                   placeholder="Your name"
@@ -139,6 +153,7 @@ const Contact = () => {
                   type="email"
                   name="email"
                   required
+                  maxLength={254}
                   value={form.email}
                   onChange={handleChange}
                   placeholder="you@example.com"
@@ -154,10 +169,16 @@ const Contact = () => {
                 </label>
                 <input
                   id="phone"
+                  type="tel"
                   name="phone"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  maxLength={16}
+                  pattern="^\+[1-9][0-9]{7,14}$"
                   value={form.phone}
                   onChange={handleChange}
-                  placeholder="+91 XXXXX XXXXX"
+                  placeholder="+91XXXXXXXXXX"
+                  title="Use international format, e.g. +916367276064"
                   className="w-full rounded-lg border border-obsidian-border bg-obsidian px-4 py-3 text-sm text-ivory placeholder:text-ivory/30 focus:border-gold-400 focus:outline-none"
                 />
               </div>
@@ -207,6 +228,7 @@ const Contact = () => {
                 name="message"
                 required
                 rows={5}
+                maxLength={5000}
                 value={form.message}
                 onChange={handleChange}
                 placeholder="Tell us about your project, goals, and timeline..."
