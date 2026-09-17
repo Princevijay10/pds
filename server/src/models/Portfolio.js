@@ -31,7 +31,7 @@ const portfolioSchema = new mongoose.Schema(
 );
 
 portfolioSchema.pre("validate", function (next) {
-  if (this.title) {
+  if (this.isNew && this.title) {
     this.slug = slugify(`${this.title}-${Date.now()}`, {
       lower: true,
       strict: true,
