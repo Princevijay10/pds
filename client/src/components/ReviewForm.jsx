@@ -40,7 +40,7 @@ const ReviewForm = () => {
               Read what our clients say, or share your own experience on our dedicated feedback page.
             </p>
             <div className="mt-7 flex flex-wrap justify-center gap-4">
-              <a href="#testimonials" className="btn-ghost">Read Reviews</a>
+              <Link to="/testimonials" className="btn-ghost">Read All Reviews</Link>
               <Link to="/feedback" className="btn-gold">Share Your Feedback <Send size={16} /></Link>
             </div>
           </div>
