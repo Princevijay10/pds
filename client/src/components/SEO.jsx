@@ -1,20 +1,36 @@
 import { Helmet } from "react-helmet-async";
 
-const SEO = ({ title, description, path = "/" }) => {
+const SITE_URL = "https://princedigitalstudio.com";
+const DEFAULT_IMAGE = `${SITE_URL}/banner.jpg`;
+
+const SEO = ({ title, description, path = "/", image = DEFAULT_IMAGE, noIndex = false }) => {
   const fullTitle = title ? `${title} | Prince Digital Studio` : "Prince Digital Studio | Design. Develop. Grow.";
   const desc =
     description ||
     "Prince Digital Studio — premium website design, development, graphic design, social media design, and brand identity services.";
-  const url = `https://princedigitalstudio.com${path}`;
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const url = `${SITE_URL}${normalizedPath}`;
+  const imageUrl = image.startsWith("http") ? image : `${SITE_URL}${image.startsWith("/") ? image : `/${image}`}`;
 
   return (
     <Helmet>
       <title>{fullTitle}</title>
       <meta name="description" content={desc} />
+      <meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow"} />
       <link rel="canonical" href={url} />
+
+      <meta property="og:type" content="website" />
+      <meta property="og:site_name" content="Prince Digital Studio" />
+      <meta property="og:locale" content="en_IN" />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={desc} />
       <meta property="og:url" content={url} />
+      <meta property="og:image" content={imageUrl} />
+
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={fullTitle} />
+      <meta name="twitter:description" content={desc} />
+      <meta name="twitter:image" content={imageUrl} />
     </Helmet>
   );
 };
