@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 import { body, validationResult } from "express-validator";
 import Portfolio from "../models/Portfolio.js";
 import { protect, adminOnly } from "../middleware/auth.js";
@@ -15,14 +16,12 @@ const PORTFOLIO_CATEGORIES = [
   "Other",
 ];
 
-// @route  GET /api/portfolio  (public)
+const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
+
 router.get("/", async (req, res, next) => {
   try {
     const { category, featured } = req.query;
     const filter = { published: true };
-    // SECURITY: only accept a known, plain-string category. Express's query
-    // parser turns bracket syntax (e.g. ?category[$ne]=null) into an object,
-    // which would otherwise flow straight into this Mongoose filter.
     if (typeof category === "string" && PORTFOLIO_CATEGORIES.includes(category)) {
       filter.category = category;
     }
@@ -34,7 +33,6 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// @route  GET /api/portfolio/admin  (admin - includes unpublished)
 router.get("/admin", protect, adminOnly, async (req, res, next) => {
   try {
     const projects = await Portfolio.find().sort({ createdAt: -1 });
@@ -44,7 +42,6 @@ router.get("/admin", protect, adminOnly, async (req, res, next) => {
   }
 });
 
-// @route  GET /api/portfolio/:slug  (public)
 router.get("/:slug", async (req, res, next) => {
   try {
     const project = await Portfolio.findOne({ slug: req.params.slug, published: true });
@@ -55,7 +52,6 @@ router.get("/:slug", async (req, res, next) => {
   }
 });
 
-// @route  POST /api/portfolio  (admin)
 router.post(
   "/",
   protect,
@@ -80,7 +76,6 @@ router.post(
   }
 );
 
-// @route  PUT /api/portfolio/:id  (admin)
 router.put(
   "/:id",
   protect,
@@ -93,6 +88,9 @@ router.put(
   ],
   async (req, res, next) => {
     try {
+      if (!isValidId(req.params.id)) {
+        return res.status(400).json({ success: false, message: "Invalid portfolio ID" });
+      }
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({ success: false, message: errors.array()[0].msg });
@@ -109,9 +107,11 @@ router.put(
   }
 );
 
-// @route  DELETE /api/portfolio/:id  (admin)
 router.delete("/:id", protect, adminOnly, async (req, res, next) => {
   try {
+    if (!isValidId(req.params.id)) {
+      return res.status(400).json({ success: false, message: "Invalid portfolio ID" });
+    }
     const project = await Portfolio.findByIdAndDelete(req.params.id);
     if (!project) return res.status(404).json({ success: false, message: "Project not found" });
     await deleteUploadedFiles([project.coverImage, ...(project.images || [])]);
