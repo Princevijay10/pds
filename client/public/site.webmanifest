@@ -1,0 +1,21 @@
+{
+  "name": "Prince Digital Studio",
+  "short_name": "PDS",
+  "description": "Prince Digital Studio — Design. Develop. Grow.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0B0D",
+  "theme_color": "#0B0B0D",
+  "icons": [
+    {
+      "src": "/logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
