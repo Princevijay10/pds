@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { ArrowRight, Star, Crown } from "lucide-react";
+import { ArrowRight, Star, Crown, Globe, Palette, Share2, ArrowUpRight } from "lucide-react";
 import SEO from "../components/SEO.jsx";
 import ServiceCard from "../components/ServiceCard.jsx";
 import PortfolioCard from "../components/PortfolioCard.jsx";
@@ -15,6 +14,63 @@ const stats = [
   { label: "Happy Clients", value: "40+" },
   { label: "Years of Craft", value: "3+" },
   { label: "Avg. Turnaround", value: "7 Days" },
+];
+
+const fallbackServices = [
+  {
+    _id: "fallback-website-design",
+    icon: "Monitor",
+    title: "Website Design",
+    shortDescription: "Premium, responsive interfaces designed around your brand and business goals.",
+  },
+  {
+    _id: "fallback-website-development",
+    icon: "Code2",
+    title: "Website Development",
+    shortDescription: "Fast, responsive websites built with modern technologies and clean architecture.",
+  },
+  {
+    _id: "fallback-graphic-design",
+    icon: "Palette",
+    title: "Graphic Design",
+    shortDescription: "Professional visual assets for campaigns, marketing, presentations, and brands.",
+  },
+  {
+    _id: "fallback-brand-identity",
+    icon: "Gem",
+    title: "Logo & Brand Identity",
+    shortDescription: "Distinctive visual identities that create consistency and recognition across channels.",
+  },
+  {
+    _id: "fallback-social-media",
+    icon: "Share2",
+    title: "Social Media Design",
+    shortDescription: "Scroll-stopping social creatives designed to communicate clearly and consistently.",
+  },
+];
+
+const fallbackWork = [
+  {
+    _id: "fallback-web",
+    icon: Globe,
+    category: "Website",
+    title: "Web Design & Development",
+    description: "Responsive digital experiences combining premium UI/UX with practical business functionality.",
+  },
+  {
+    _id: "fallback-brand",
+    icon: Palette,
+    category: "Brand Identity",
+    title: "Logo & Visual Identity",
+    description: "Cohesive brand systems covering logos, typography, visual direction, and digital assets.",
+  },
+  {
+    _id: "fallback-content",
+    icon: Share2,
+    category: "Digital Content",
+    title: "Social & Marketing Creatives",
+    description: "Campaign-ready graphics and digital content built for clear communication and brand consistency.",
+  },
 ];
 
 const Home = () => {
@@ -134,8 +190,10 @@ const Home = () => {
               <p className="text-sm text-ivory/50">Loading services…</p>
             </div>
           ) : servicesError ? (
-            <div className="mt-14 rounded-2xl border border-obsidian-border bg-obsidian-surface/50 p-10 text-center">
-              <p className="text-sm text-ivory/50">Unable to load services right now.</p>
+            <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {fallbackServices.map((s, i) => (
+                <ServiceCard key={s._id} service={s} index={i} />
+              ))}
             </div>
           ) : services.length > 0 ? (
             <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -156,9 +214,9 @@ const Home = () => {
         <div className="container-px mx-auto max-w-7xl">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
-              <span className="eyebrow">Selected Work</span>
+              <span className="eyebrow">{projectsError ? "Our Capabilities" : "Selected Work"}</span>
               <h2 className="mt-4 font-display text-3xl font-bold text-ivory sm:text-4xl">
-                Projects We&apos;re Proud Of
+                {projectsError ? "Design, Development & Digital Content" : "Projects We&apos;re Proud Of"}
               </h2>
             </div>
             <Link to="/portfolio" className="btn-ghost">
@@ -171,8 +229,30 @@ const Home = () => {
               <p className="text-sm text-ivory/50">Loading our work…</p>
             </div>
           ) : projectsError ? (
-            <div className="mt-12 rounded-2xl border border-obsidian-border bg-obsidian-surface/50 p-10 text-center">
-              <p className="text-sm text-ivory/50">Unable to load our work right now.</p>
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {fallbackWork.map((item, i) => (
+                <motion.div
+                  key={item._id}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{ duration: 0.5, delay: i * 0.06 }}
+                  className="card-surface group p-8 transition-colors duration-300 hover:border-gold-400/50"
+                >
+                  <div className="badge-medallion h-14 w-14 text-gold-400">
+                    <item.icon size={26} />
+                  </div>
+                  <span className="eyebrow mt-6">{item.category}</span>
+                  <h3 className="mt-2 font-display text-xl font-bold text-ivory">{item.title}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-ivory/60">{item.description}</p>
+                  <Link
+                    to="/contact"
+                    className="mt-6 inline-flex items-center gap-1.5 font-accent text-sm font-semibold text-ivory/80 transition-colors group-hover:text-gold-400"
+                  >
+                    Start a project <ArrowUpRight size={16} />
+                  </Link>
+                </motion.div>
+              ))}
             </div>
           ) : projects.length > 0 ? (
             <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -203,8 +283,21 @@ const Home = () => {
               <p className="text-sm text-ivory/50">Loading client reviews…</p>
             </div>
           ) : testimonialsError ? (
-            <div className="mt-14 rounded-2xl border border-obsidian-border bg-obsidian-surface/50 p-10 text-center">
-              <p className="text-sm text-ivory/50">Unable to load client reviews right now.</p>
+            <div className="mt-14 grid gap-6 md:grid-cols-3">
+              <div className="card-surface p-7 md:col-span-3">
+                <div className="mx-auto max-w-2xl text-center">
+                  <Star size={28} className="mx-auto text-gold-400" />
+                  <h3 className="mt-4 font-display text-xl font-bold text-ivory">
+                    Client reviews are temporarily unavailable
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-ivory/60">
+                    The website is still fully usable. Published client reviews will appear here automatically when the studio server reconnects.
+                  </p>
+                  <Link to="/feedback" className="btn-gold mt-6">
+                    Share Your Feedback <ArrowRight size={16} />
+                  </Link>
+                </div>
+              </div>
             </div>
           ) : testimonials.length > 0 ? (
             <div className="mt-14 grid gap-6 md:grid-cols-3">
