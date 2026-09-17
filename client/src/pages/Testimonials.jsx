@@ -79,7 +79,7 @@ const Testimonials = () => {
                       <Star key={idx} size={16} fill="currentColor" />
                     ))}
                   </div>
-                  <p className="mt-5 flex-1 text-sm leading-relaxed text-ivory/70">"{t.message}"</p>
+                  <p className="mt-5 flex-1 text-sm leading-relaxed text-ivory/70">&quot;{t.message}&quot;</p>
                   <div className="mt-6 flex items-center gap-3 border-t border-obsidian-border pt-5">
                     <div className="badge-medallion h-11 w-11 shrink-0 text-sm font-bold text-gold-400">
                       {t.clientName?.charAt(0)?.toUpperCase() || "C"}
