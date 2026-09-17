@@ -136,7 +136,7 @@ const Dashboard = () => {
           </h1>
 
           <p className="mt-1 text-sm text-ivory/50">
-            Overview of your studio's activity.
+            Overview of your studio&apos;s activity.
           </p>
         </div>
 
@@ -337,7 +337,7 @@ const Dashboard = () => {
 
                 {/* Message */}
                 <p className="mt-4 line-clamp-3 text-sm leading-6 text-ivory/60">
-                  "{review.message}"
+                  &quot;{review.message}&quot;
                 </p>
 
                 {/* Actions */}
