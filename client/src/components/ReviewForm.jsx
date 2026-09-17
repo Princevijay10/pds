@@ -78,11 +78,12 @@ const ReviewForm = () => {
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Name */}
         <div>
-          <label className="mb-2 block text-xs font-accent font-semibold uppercase tracking-wider text-ivory/60">
+          <label className="mb-2 block text-xs font-accent font-semibold uppercase tracking-wider text-ivory/60" htmlFor="review-client-name">
             Name *
           </label>
 
           <input
+            id="review-client-name"
             required
             name="clientName"
             value={form.clientName}
@@ -94,11 +95,12 @@ const ReviewForm = () => {
 
         {/* Email */}
         <div>
-          <label className="mb-2 block text-xs font-accent font-semibold uppercase tracking-wider text-ivory/60">
+          <label className="mb-2 block text-xs font-accent font-semibold uppercase tracking-wider text-ivory/60" htmlFor="review-email">
             Email
           </label>
 
           <input
+            id="review-email"
             type="email"
             name="email"
             value={form.email}
@@ -110,21 +112,35 @@ const ReviewForm = () => {
 
         {/* Role + Company */}
         <div className="grid gap-4 sm:grid-cols-2">
-          <input
-            name="role"
-            value={form.role}
-            onChange={handleChange}
-            placeholder="Role (optional)"
-            className="w-full rounded-lg border border-obsidian-border bg-obsidian px-4 py-3 text-sm text-ivory placeholder:text-ivory/30 focus:border-gold-400 focus:outline-none"
-          />
+          <div>
+            <label className="mb-2 block text-xs font-accent font-semibold uppercase tracking-wider text-ivory/60" htmlFor="review-role">
+              Role (optional)
+            </label>
 
-          <input
-            name="company"
-            value={form.company}
-            onChange={handleChange}
-            placeholder="Company (optional)"
-            className="w-full rounded-lg border border-obsidian-border bg-obsidian px-4 py-3 text-sm text-ivory placeholder:text-ivory/30 focus:border-gold-400 focus:outline-none"
-          />
+            <input
+              id="review-role"
+              name="role"
+              value={form.role}
+              onChange={handleChange}
+              placeholder="e.g. Founder, Manager"
+              className="w-full rounded-lg border border-obsidian-border bg-obsidian px-4 py-3 text-sm text-ivory placeholder:text-ivory/30 focus:border-gold-400 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-xs font-accent font-semibold uppercase tracking-wider text-ivory/60" htmlFor="review-company">
+              Company (optional)
+            </label>
+
+            <input
+              id="review-company"
+              name="company"
+              value={form.company}
+              onChange={handleChange}
+              placeholder="Your company name"
+              className="w-full rounded-lg border border-obsidian-border bg-obsidian px-4 py-3 text-sm text-ivory placeholder:text-ivory/30 focus:border-gold-400 focus:outline-none"
+            />
+          </div>
         </div>
 
         {/* Rating */}
@@ -162,11 +178,12 @@ const ReviewForm = () => {
 
         {/* Message */}
         <div>
-          <label className="mb-2 block text-xs font-accent font-semibold uppercase tracking-wider text-ivory/60">
+          <label className="mb-2 block text-xs font-accent font-semibold uppercase tracking-wider text-ivory/60" htmlFor="review-message">
             Your Review *
           </label>
 
           <textarea
+            id="review-message"
             required
             name="message"
             rows={5}
