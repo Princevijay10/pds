@@ -49,7 +49,9 @@ const Navbar = () => {
               end={link.to === "/"}
               className={({ isActive }) =>
                 `font-accent text-sm font-medium transition-colors ${
-                  isActive ? "text-gold-400" : "text-ivory/80 hover:text-gold-300"
+                  isActive
+                    ? "relative text-gold-400 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-full after:rounded-full after:bg-gold-400 after:content-['']"
+                    : "text-ivory/80 hover:text-gold-300"
                 }`
               }
             >
