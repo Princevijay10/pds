@@ -3,11 +3,20 @@ import api from "../utils/api.js";
 
 const AuthContext = createContext(null);
 
+const getStoredUser = () => {
+  const stored = localStorage.getItem("pds_user");
+  if (!stored) return null;
+
+  try {
+    return JSON.parse(stored);
+  } catch {
+    localStorage.removeItem("pds_user");
+    return null;
+  }
+};
+
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const stored = localStorage.getItem("pds_user");
-    return stored ? JSON.parse(stored) : null;
-  });
+  const [user, setUser] = useState(getStoredUser);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
