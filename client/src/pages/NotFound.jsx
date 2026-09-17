@@ -10,7 +10,7 @@ const NotFound = () => (
         <Crown size={32} />
       </div>
       <h1 className="mt-8 font-display text-5xl font-black text-ivory sm:text-6xl">404</h1>
-      <p className="mt-3 text-ivory/60">This page doesn't exist — but your next great project can.</p>
+      <p className="mt-3 text-ivory/60">This page doesn&apos;t exist — but your next great project can.</p>
       <Link to="/" className="btn-gold mt-8">
         <ArrowLeft size={16} /> Back to Home
       </Link>
