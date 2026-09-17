@@ -9,7 +9,6 @@ import {
   LogOut,
   ExternalLink,
   Bell,
-  UserRound,
   Clock3,
   Star,
 } from "lucide-react";
@@ -194,11 +193,11 @@ const AdminLayout = () => {
 
       {/* =====================================================
           MAIN AREA
-      ====================================================== */}
+      ====================================================== */
       <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden">
         {/* =================================================
             DESKTOP TOP BAR
-        ================================================== */}
+        ================================================== */
         <header className="hidden items-center justify-end border-b border-obsidian-border bg-obsidian-light px-6 py-3 md:flex">
           <div className="relative">
             {/* Notification button */}
@@ -311,7 +310,7 @@ const AdminLayout = () => {
 
         {/* =================================================
             PAGE CONTENT
-        ================================================== */}
+        ================================================== */
         <main className="flex-1 p-5 sm:p-8">
           <Outlet />
         </main>
