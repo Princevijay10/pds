@@ -425,7 +425,7 @@ const ManageTestimonials = () => {
 
               {/* Message */}
               <p className="mt-3 text-sm text-ivory/60">
-                "{testimonial.message}"
+                &quot;{testimonial.message}&quot;
               </p>
 
               {/* Status */}
