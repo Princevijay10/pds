@@ -21,11 +21,28 @@ const Home = () => {
   const [services, setServices] = useState([]);
   const [projects, setProjects] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
+  const [projectsLoading, setProjectsLoading] = useState(true);
+  const [testimonialsLoading, setTestimonialsLoading] = useState(true);
+  const [servicesError, setServicesError] = useState(false);
+  const [projectsError, setProjectsError] = useState(false);
+  const [testimonialsError, setTestimonialsError] = useState(false);
 
   useEffect(() => {
-    api.get("/services").then((res) => setServices(res.data.services.slice(0, 5))).catch(() => {});
-    api.get("/portfolio?featured=true").then((res) => setProjects(res.data.projects.slice(0, 6))).catch(() => {});
-    api.get("/testimonials").then((res) => setTestimonials(res.data.testimonials.slice(0, 3))).catch(() => {});
+    api.get("/services")
+      .then((res) => setServices(res.data.services?.slice(0, 5) || []))
+      .catch(() => setServicesError(true))
+      .finally(() => setServicesLoading(false));
+
+    api.get("/portfolio?featured=true")
+      .then((res) => setProjects(res.data.projects?.slice(0, 6) || []))
+      .catch(() => setProjectsError(true))
+      .finally(() => setProjectsLoading(false));
+
+    api.get("/testimonials")
+      .then((res) => setTestimonials(res.data.testimonials?.slice(0, 3) || []))
+      .catch(() => setTestimonialsError(true))
+      .finally(() => setTestimonialsLoading(false));
   }, []);
 
   return (
@@ -100,61 +117,96 @@ const Home = () => {
       </section>
 
       {/* Services */}
-      {services.length > 0 && (
-        <section className="section border-t border-obsidian-border">
-          <div className="container-px mx-auto max-w-7xl">
-            <div className="mx-auto max-w-2xl text-center">
-              <span className="eyebrow justify-center">Our Services</span>
-              <h2 className="mt-4 font-display text-3xl font-bold text-ivory sm:text-4xl">
-                Everything Your Brand Needs to Stand Out
-              </h2>
-              <p className="mt-4 text-ivory/60">
-                From first sketch to final launch — design, development, and content, all under one roof.
-              </p>
+      <section className="section border-t border-obsidian-border" aria-busy={servicesLoading}>
+        <div className="container-px mx-auto max-w-7xl">
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="eyebrow justify-center">Our Services</span>
+            <h2 className="mt-4 font-display text-3xl font-bold text-ivory sm:text-4xl">
+              Everything Your Brand Needs to Stand Out
+            </h2>
+            <p className="mt-4 text-ivory/60">
+              From first sketch to final launch — design, development, and content, all under one roof.
+            </p>
+          </div>
+
+          {servicesLoading ? (
+            <div className="mt-14 rounded-2xl border border-obsidian-border bg-obsidian-surface/50 p-10 text-center">
+              <p className="text-sm text-ivory/50">Loading services…</p>
             </div>
+          ) : servicesError ? (
+            <div className="mt-14 rounded-2xl border border-obsidian-border bg-obsidian-surface/50 p-10 text-center">
+              <p className="text-sm text-ivory/50">Unable to load services right now.</p>
+            </div>
+          ) : services.length > 0 ? (
             <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {services.map((s, i) => (
                 <ServiceCard key={s._id} service={s} index={i} />
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          ) : (
+            <div className="mt-14 rounded-2xl border border-obsidian-border bg-obsidian-surface/50 p-10 text-center">
+              <p className="text-sm text-ivory/50">Our services will appear here soon.</p>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Portfolio preview */}
-      {projects.length > 0 && (
-        <section className="section border-t border-obsidian-border">
-          <div className="container-px mx-auto max-w-7xl">
-            <div className="flex flex-wrap items-end justify-between gap-6">
-              <div>
-                <span className="eyebrow">Selected Work</span>
-                <h2 className="mt-4 font-display text-3xl font-bold text-ivory sm:text-4xl">
-                  Projects We're Proud Of
-                </h2>
-              </div>
-              <Link to="/portfolio" className="btn-ghost">
-                View All Work <ArrowRight size={16} />
-              </Link>
+      <section className="section border-t border-obsidian-border" aria-busy={projectsLoading}>
+        <div className="container-px mx-auto max-w-7xl">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <span className="eyebrow">Selected Work</span>
+              <h2 className="mt-4 font-display text-3xl font-bold text-ivory sm:text-4xl">
+                Projects We're Proud Of
+              </h2>
             </div>
+            <Link to="/portfolio" className="btn-ghost">
+              View All Work <ArrowRight size={16} />
+            </Link>
+          </div>
+
+          {projectsLoading ? (
+            <div className="mt-12 rounded-2xl border border-obsidian-border bg-obsidian-surface/50 p-10 text-center">
+              <p className="text-sm text-ivory/50">Loading our work…</p>
+            </div>
+          ) : projectsError ? (
+            <div className="mt-12 rounded-2xl border border-obsidian-border bg-obsidian-surface/50 p-10 text-center">
+              <p className="text-sm text-ivory/50">Unable to load our work right now.</p>
+            </div>
+          ) : projects.length > 0 ? (
             <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {projects.map((p, i) => (
                 <PortfolioCard key={p._id} project={p} index={i} />
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          ) : (
+            <div className="mt-12 rounded-2xl border border-obsidian-border bg-obsidian-surface/50 p-10 text-center">
+              <p className="text-sm text-ivory/50">Our latest projects will appear here soon.</p>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Testimonials */}
-      {testimonials.length > 0 && (
-        <section className="section border-t border-obsidian-border">
-          <div className="container-px mx-auto max-w-7xl">
-            <div className="mx-auto max-w-2xl text-center">
-              <span className="eyebrow justify-center">Client Trust</span>
-              <h2 className="mt-4 font-display text-3xl font-bold text-ivory sm:text-4xl">
-                What Our Clients Say
-              </h2>
+      <section id="testimonials" className="section border-t border-obsidian-border" aria-busy={testimonialsLoading}>
+        <div className="container-px mx-auto max-w-7xl">
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="eyebrow justify-center">Client Trust</span>
+            <h2 className="mt-4 font-display text-3xl font-bold text-ivory sm:text-4xl">
+              What Our Clients Say
+            </h2>
+          </div>
+
+          {testimonialsLoading ? (
+            <div className="mt-14 rounded-2xl border border-obsidian-border bg-obsidian-surface/50 p-10 text-center">
+              <p className="text-sm text-ivory/50">Loading client reviews…</p>
             </div>
+          ) : testimonialsError ? (
+            <div className="mt-14 rounded-2xl border border-obsidian-border bg-obsidian-surface/50 p-10 text-center">
+              <p className="text-sm text-ivory/50">Unable to load client reviews right now.</p>
+            </div>
+          ) : testimonials.length > 0 ? (
             <div className="mt-14 grid gap-6 md:grid-cols-3">
               {testimonials.map((t, i) => (
                 <motion.div
@@ -185,14 +237,18 @@ const Home = () => {
                 </motion.div>
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          ) : (
+            <div className="mt-14 rounded-2xl border border-obsidian-border bg-obsidian-surface/50 p-10 text-center">
+              <p className="text-sm text-ivory/50">Client reviews will appear here soon.</p>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Review Form */}
       <section className="section border-t border-obsidian-border">
         <div className="container-px mx-auto max-w-2xl">
-         <ReviewForm />
+          <ReviewForm />
         </div>
       </section>
 
