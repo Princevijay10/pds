@@ -58,7 +58,7 @@ const Navbar = () => {
               {link.label}
             </NavLink>
           ))}
-          <Link to="/contact" className="btn-gold rounded-full px-5 py-2.5 text-sm">
+          <Link to="/contact" className="btn-ghost rounded-full px-5 py-2.5 text-sm">
             Get a Quote
           </Link>
         </div>
