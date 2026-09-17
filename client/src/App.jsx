@@ -8,6 +8,7 @@ import Services from "./pages/Services.jsx";
 import Portfolio from "./pages/Portfolio.jsx";
 import ProjectDetail from "./pages/ProjectDetail.jsx";
 import Contact from "./pages/Contact.jsx";
+import Feedback from "./pages/Feedback.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
 import AdminLogin from "./pages/admin/AdminLogin.jsx";
@@ -28,6 +29,7 @@ function App() {
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/portfolio/:slug" element={<ProjectDetail />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/feedback" element={<Feedback />} />
         <Route path="*" element={<NotFound />} />
       </Route>
 
