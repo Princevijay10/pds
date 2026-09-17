@@ -1,3 +1,4 @@
+import dns from "node:dns";
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -21,7 +22,8 @@ import uploadRoutes from "./routes/uploadRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 
 dotenv.config();
-
+// Use reliable public DNS for MongoDB Atlas SRV resolution
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
 // Fail fast on missing critical config, instead of discovering it later when
 // a user tries to log in (missing JWT_SECRET) or the DB connection hangs
 // (missing MONGO_URI).
