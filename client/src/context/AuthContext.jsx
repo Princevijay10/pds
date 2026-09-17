@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import api from "../utils/api.js";
 
-const AuthContext = createContext(null);
+export const AuthContext = createContext(null);
 
 const getStoredUser = () => {
   const stored = localStorage.getItem("pds_user");
@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
       return;
     }
+
     api
       .get("/auth/me")
       .then((res) => {
