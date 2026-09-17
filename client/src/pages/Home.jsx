@@ -158,7 +158,7 @@ const Home = () => {
             <div>
               <span className="eyebrow">Selected Work</span>
               <h2 className="mt-4 font-display text-3xl font-bold text-ivory sm:text-4xl">
-                Projects We're Proud Of
+                Projects We&apos;re Proud Of
               </h2>
             </div>
             <Link to="/portfolio" className="btn-ghost">
@@ -222,7 +222,7 @@ const Home = () => {
                       <Star key={idx} size={15} fill="currentColor" />
                     ))}
                   </div>
-                  <p className="mt-4 text-sm leading-relaxed text-ivory/70">"{t.message}"</p>
+                  <p className="mt-4 text-sm leading-relaxed text-ivory/70">&quot;{t.message}&quot;</p>
                   <div className="mt-5 flex items-center gap-3">
                     <div className="badge-medallion h-10 w-10 text-sm font-bold text-gold-400">
                       {t.clientName.charAt(0)}
@@ -261,10 +261,10 @@ const Home = () => {
               Ready to Build Something <span className="gold-text">Premium?</span>
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-ivory/60">
-              Tell us about your project and we'll get back to you within 24 hours with a plan and quote.
+              Tell us about your project and we&apos;ll get back to you within 24 hours with a plan and quote.
             </p>
             <Link to="/contact" className="btn-gold mt-8">
-              Let's Work Together <ArrowRight size={18} />
+              Let&apos;s Work Together <ArrowRight size={18} />
             </Link>
           </div>
         </div>
