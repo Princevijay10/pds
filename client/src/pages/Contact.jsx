@@ -67,10 +67,10 @@ const Contact = () => {
         <div className="container-px mx-auto max-w-4xl text-center">
           <span className="eyebrow justify-center">Get In Touch</span>
           <h1 className="mt-4 font-display text-3xl font-bold text-ivory sm:text-4xl lg:text-5xl">
-            Let's Build Something <span className="gold-text">Great Together</span>
+            Let&apos;s Build Something <span className="gold-text">Great Together</span>
           </h1>
           <p className="mt-5 text-ivory/60">
-            Share a few details about your project and we'll respond within 24 hours.
+            Share a few details about your project and we&apos;ll respond within 24 hours.
           </p>
         </div>
       </section>
