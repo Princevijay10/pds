@@ -100,24 +100,26 @@ const Home = () => {
       </section>
 
       {/* Services */}
-      <section className="section border-t border-obsidian-border">
-        <div className="container-px mx-auto max-w-7xl">
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="eyebrow justify-center">Our Services</span>
-            <h2 className="mt-4 font-display text-3xl font-bold text-ivory sm:text-4xl">
-              Everything Your Brand Needs to Stand Out
-            </h2>
-            <p className="mt-4 text-ivory/60">
-              From first sketch to final launch — design, development, and content, all under one roof.
-            </p>
+      {services.length > 0 && (
+        <section className="section border-t border-obsidian-border">
+          <div className="container-px mx-auto max-w-7xl">
+            <div className="mx-auto max-w-2xl text-center">
+              <span className="eyebrow justify-center">Our Services</span>
+              <h2 className="mt-4 font-display text-3xl font-bold text-ivory sm:text-4xl">
+                Everything Your Brand Needs to Stand Out
+              </h2>
+              <p className="mt-4 text-ivory/60">
+                From first sketch to final launch — design, development, and content, all under one roof.
+              </p>
+            </div>
+            <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {services.map((s, i) => (
+                <ServiceCard key={s._id} service={s} index={i} />
+              ))}
+            </div>
           </div>
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((s, i) => (
-              <ServiceCard key={s._id} service={s} index={i} />
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Portfolio preview */}
       {projects.length > 0 && (
