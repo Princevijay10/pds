@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 import { body, validationResult } from "express-validator";
 import rateLimit from "express-rate-limit";
 import nodemailer from "nodemailer";
@@ -9,6 +10,7 @@ const router = express.Router();
 
 const ALLOWED_STATUSES = ["new", "contacted", "qualified", "converted", "closed"];
 const PHONE_REGEX = /^\+[1-9]\d{7,14}$/;
+const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 const escapeHtml = (str = "") =>
   String(str)
@@ -30,19 +32,14 @@ const contactLimiter = rateLimit({
 });
 
 const sendNotification = async (lead) => {
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    return;
-  }
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) return;
 
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT) || 587,
       secure: false,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
     });
 
     await transporter.sendMail({
@@ -68,49 +65,21 @@ router.post(
   "/",
   contactLimiter,
   [
-    body("name")
-      .trim()
-      .notEmpty()
-      .isLength({ max: 100 })
-      .withMessage("Name is required and cannot exceed 100 characters"),
-    body("email")
-      .trim()
-      .normalizeEmail()
-      .isEmail()
-      .isLength({ max: 254 })
-      .withMessage("Valid email is required"),
-    body("phone")
-      .optional({ values: "falsy" })
-      .trim()
-      .custom((value) => PHONE_REGEX.test(value))
-      .withMessage("Phone must use international format, e.g. +916367276064"),
-    body("service")
-      .optional({ values: "falsy" })
-      .trim()
-      .isLength({ max: 100 })
-      .withMessage("Service cannot exceed 100 characters"),
-    body("budget")
-      .optional({ values: "falsy" })
-      .trim()
-      .isLength({ max: 50 })
-      .withMessage("Budget cannot exceed 50 characters"),
-    body("message")
-      .trim()
-      .isLength({ min: 10, max: 5000 })
-      .withMessage("Message must be between 10 and 5000 characters"),
+    body("name").trim().notEmpty().isLength({ max: 100 }).withMessage("Name is required and cannot exceed 100 characters"),
+    body("email").trim().normalizeEmail().isEmail().isLength({ max: 254 }).withMessage("Valid email is required"),
+    body("phone").optional({ values: "falsy" }).trim().custom((value) => PHONE_REGEX.test(value)).withMessage("Phone must use international format, e.g. +916367276064"),
+    body("service").optional({ values: "falsy" }).trim().isLength({ max: 100 }).withMessage("Service cannot exceed 100 characters"),
+    body("budget").optional({ values: "falsy" }).trim().isLength({ max: 50 }).withMessage("Budget cannot exceed 50 characters"),
+    body("message").trim().isLength({ min: 10, max: 5000 }).withMessage("Message must be between 10 and 5000 characters"),
   ],
   async (req, res, next) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: errors.array()[0].msg,
-        });
+        return res.status(400).json({ success: false, message: errors.array()[0].msg });
       }
 
       const { name, email, phone, service, budget, message } = req.body;
-
       const lead = await Contact.create({
         name: name.trim(),
         email: email.trim().toLowerCase(),
@@ -121,7 +90,6 @@ router.post(
       });
 
       sendNotification(lead);
-
       res.status(201).json({
         success: true,
         message: "Thanks! Your message has been received. We'll get back to you within 24 hours.",
@@ -137,11 +105,9 @@ router.get("/", protect, adminOnly, async (req, res, next) => {
     const { status, page = 1, limit = 20, search } = req.query;
     const safeLimit = Math.min(Math.max(Number(limit) || 20, 1), 100);
     const safePage = Math.max(Number(page) || 1, 1);
-
     const filter = {};
-    if (typeof status === "string" && ALLOWED_STATUSES.includes(status)) {
-      filter.status = status;
-    }
+
+    if (typeof status === "string" && ALLOWED_STATUSES.includes(status)) filter.status = status;
 
     if (typeof search === "string" && search.trim()) {
       const term = escapeRegex(search.trim().slice(0, 200));
@@ -158,7 +124,6 @@ router.get("/", protect, adminOnly, async (req, res, next) => {
       .sort({ createdAt: -1 })
       .skip((safePage - 1) * safeLimit)
       .limit(safeLimit);
-
     const total = await Contact.countDocuments(filter);
 
     res.json({
@@ -176,6 +141,10 @@ router.get("/", protect, adminOnly, async (req, res, next) => {
 
 router.put("/:id", protect, adminOnly, async (req, res, next) => {
   try {
+    if (!isValidId(req.params.id)) {
+      return res.status(400).json({ success: false, message: "Invalid lead ID" });
+    }
+
     const { status, internalNotes, followUpDate, lastContacted } = req.body;
     const updateData = {};
 
@@ -224,16 +193,12 @@ router.put("/:id", protect, adminOnly, async (req, res, next) => {
       return res.status(400).json({ success: false, message: "No valid fields to update" });
     }
 
-    const lead = await Contact.findByIdAndUpdate(
-      req.params.id,
-      { $set: updateData },
-      { new: true, runValidators: true }
-    );
+    const lead = await Contact.findByIdAndUpdate(req.params.id, { $set: updateData }, {
+      new: true,
+      runValidators: true,
+    });
 
-    if (!lead) {
-      return res.status(404).json({ success: false, message: "Lead not found" });
-    }
-
+    if (!lead) return res.status(404).json({ success: false, message: "Lead not found" });
     res.json({ success: true, message: "Lead updated successfully", lead });
   } catch (err) {
     next(err);
@@ -242,12 +207,11 @@ router.put("/:id", protect, adminOnly, async (req, res, next) => {
 
 router.delete("/:id", protect, adminOnly, async (req, res, next) => {
   try {
-    const lead = await Contact.findByIdAndDelete(req.params.id);
-
-    if (!lead) {
-      return res.status(404).json({ success: false, message: "Lead not found" });
+    if (!isValidId(req.params.id)) {
+      return res.status(400).json({ success: false, message: "Invalid lead ID" });
     }
-
+    const lead = await Contact.findByIdAndDelete(req.params.id);
+    if (!lead) return res.status(404).json({ success: false, message: "Lead not found" });
     res.json({ success: true, message: "Lead deleted" });
   } catch (err) {
     next(err);
