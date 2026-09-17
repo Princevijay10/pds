@@ -34,7 +34,7 @@ const ReviewForm = () => {
       <section className="border-t border-obsidian-border py-14 sm:py-16">
         <div className="container-px mx-auto max-w-3xl">
           <div className="card-surface px-7 py-10 text-center sm:px-10">
-            <span className="eyebrow justify-center">Share Your Experience</span>
+            <span className="eyebrow normal-case tracking-normal justify-center">Share Your Experience</span>
             <h2 className="mt-3 font-display text-2xl font-bold text-ivory sm:text-3xl">Have feedback for PDS?</h2>
             <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-ivory/50">
               Read what our clients say, or share your own experience on our dedicated feedback page.
@@ -52,7 +52,7 @@ const ReviewForm = () => {
   return (
     <div className="card-surface p-7">
       <div className="mb-6">
-        <span className="eyebrow">Share Your Experience</span>
+        <span className="eyebrow normal-case tracking-normal">Share Your Experience</span>
         <h1 className="mt-3 font-display text-2xl font-bold text-ivory sm:text-3xl">Tell Us What You Think</h1>
         <p className="mt-2 text-sm text-ivory/50">Your feedback helps us improve and helps others understand the PDS experience.</p>
       </div>
