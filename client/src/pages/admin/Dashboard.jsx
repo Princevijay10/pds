@@ -238,7 +238,7 @@ const Dashboard = () => {
                     Service
                   </th>
 
-                  <th className="px-5 py-3">
+                  <th className="px-5 py-3 text-right">
                     Status
                   </th>
                 </tr>
@@ -262,8 +262,8 @@ const Dashboard = () => {
                       {lead.service || "-"}
                     </td>
 
-                    <td className="px-5 py-3">
-                      <span className="rounded-full bg-gold-400/10 px-3 py-1 text-xs text-gold-400">
+                    <td className="px-5 py-3 text-right">
+                      <span className="inline-block rounded-full bg-gold-400/10 px-3 py-1 text-xs text-gold-400">
                         {lead.status}
                       </span>
                     </td>
