@@ -15,6 +15,7 @@ import {
 import { useAuth } from "../../context/AuthContext.jsx";
 import logo from "../../assets/logo.jpg";
 import api from "../../utils/api.js";
+import { enablePushNotifications, sendPushTest } from "../../utils/pushNotifications.js";
 
 const navItems = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
@@ -35,6 +36,8 @@ const AdminLayout = () => {
   const [pendingReviews, setPendingReviews] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notificationLoading, setNotificationLoading] = useState(false);
+  const [pushLoading, setPushLoading] = useState(false);
+  const [pushEnabled, setPushEnabled] = useState(false);
 
   const loadNotifications = useCallback(async (showLoading = false) => {
     try {
@@ -67,6 +70,31 @@ const AdminLayout = () => {
   }, [loadNotifications]);
 
   const totalNotifications = newLeads + pendingReviews;
+
+  const handleEnablePush = async () => {
+    try {
+      setPushLoading(true);
+      await enablePushNotifications();
+      setPushEnabled(true);
+      toast.success("Mobile lead notifications enabled.");
+    } catch (error) {
+      toast.error(error.message || "Could not enable mobile notifications.");
+    } finally {
+      setPushLoading(false);
+    }
+  };
+
+  const handleTestPush = async () => {
+    try {
+      setPushLoading(true);
+      await sendPushTest();
+      toast.success("Test notification sent to your devices.");
+    } catch (error) {
+      toast.error(error.message || "Could not send test notification.");
+    } finally {
+      setPushLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -136,7 +164,28 @@ const AdminLayout = () => {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden">
-        <header className="hidden items-center justify-end border-b border-obsidian-border bg-obsidian-light px-6 py-3 md:flex">
+        <header className="hidden items-center justify-between border-b border-obsidian-border bg-obsidian-light px-6 py-3 md:flex">
+          <div className="flex items-center gap-2">
+            {!pushEnabled ? (
+              <button
+                type="button"
+                onClick={handleEnablePush}
+                disabled={pushLoading}
+                className="rounded-lg border border-gold-400/30 px-3 py-2 text-xs font-semibold text-gold-400 hover:bg-gold-400/10 disabled:opacity-50"
+              >
+                {pushLoading ? "Enabling..." : "Enable Mobile Alerts"}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleTestPush}
+                disabled={pushLoading}
+                className="rounded-lg border border-green-400/30 px-3 py-2 text-xs font-semibold text-green-400 hover:bg-green-400/10 disabled:opacity-50"
+              >
+                {pushLoading ? "Sending..." : "Test Mobile Alert"}
+              </button>
+            )}
+          </div>
           <div className="relative">
             <button
               type="button"
@@ -177,6 +226,15 @@ const AdminLayout = () => {
           </div>
 
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={pushEnabled ? handleTestPush : handleEnablePush}
+              disabled={pushLoading}
+              className="rounded-lg border border-gold-400/30 px-2.5 py-2 text-[10px] font-semibold text-gold-400 disabled:opacity-50"
+              title={pushEnabled ? "Send test notification" : "Enable mobile notifications"}
+            >
+              {pushLoading ? "..." : pushEnabled ? "Test" : "Alerts"}
+            </button>
             <div className="relative">
               <button
                 type="button"
