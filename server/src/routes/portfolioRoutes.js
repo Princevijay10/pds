@@ -42,6 +42,50 @@ router.get("/admin", protect, adminOnly, async (req, res, next) => {
   }
 });
 
+router.get("/stats", async (req, res, next) => {
+  try {
+    const [projectCount, clientCount, turnaround] = await Promise.all([
+      Portfolio.countDocuments({ published: true }),
+      Portfolio.aggregate([
+        { $match: { published: true, client: { $type: "string", $ne: "" } } },
+        { $group: { _id: { $toLower: { $trim: { input: "$client" } } } } },
+        { $count: "count" },
+      ]),
+      Portfolio.aggregate([
+        { $match: { published: true, deliveryDays: { $gte: 1 } } },
+        { $group: { _id: null, average: { $avg: "$deliveryDays" }, count: { $sum: 1 } } },
+      ]),
+    ]);
+
+    let yearsOfCraft = null;
+    if (process.env.PDS_START_DATE) {
+      const startDate = new Date(process.env.PDS_START_DATE);
+      const now = new Date();
+      if (!Number.isNaN(startDate.getTime()) && startDate <= now) {
+        const millisecondsPerYear = 365.2425 * 24 * 60 * 60 * 1000;
+        yearsOfCraft = Math.floor((now - startDate) / millisecondsPerYear);
+      }
+    }
+
+    const averageTurnaround = turnaround[0]?.average
+      ? Math.round(turnaround[0].average)
+      : null;
+
+    res.json({
+      success: true,
+      stats: {
+        projectsDelivered: projectCount,
+        happyClients: clientCount[0]?.count || 0,
+        yearsOfCraft,
+        avgTurnaroundDays: averageTurnaround,
+        turnaroundSampleSize: turnaround[0]?.count || 0,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get("/:slug", async (req, res, next) => {
   try {
     const project = await Portfolio.findOne({ slug: req.params.slug, published: true });
