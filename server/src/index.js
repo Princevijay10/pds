@@ -20,6 +20,7 @@ import serviceRoutes from "./routes/serviceRoutes.js";
 import testimonialRoutes from "./routes/testimonialRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
+import pushRoutes from "./routes/pushRoutes.js";
 
 dotenv.config();
 // Use reliable public DNS for MongoDB Atlas SRV resolution
@@ -87,6 +88,7 @@ app.use("/api/services", serviceRoutes);
 app.use("/api/testimonials", testimonialRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/push", pushRoutes);
 
 // Any /api/* request that didn't match a route above is a real 404 — this
 // must be registered before the SPA catch-all below, and applies in every
