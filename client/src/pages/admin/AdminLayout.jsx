@@ -169,7 +169,11 @@ const AdminLayout = () => {
 
       <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden bg-[radial-gradient(circle_at_80%_0%,rgba(212,164,66,0.05),transparent_28%)]">
         <header className="hidden min-h-[68px] items-center justify-between border-b border-obsidian-border bg-obsidian-light/95 px-8 py-3 backdrop-blur md:flex">
-          <div className="flex items-center gap-2">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-gold-400">PDS Control Center</p>
+            <p className="mt-0.5 text-xs text-ivory/35">Manage your studio from one place</p>
+          </div>
+          <div className="flex items-center gap-3">
             {!pushEnabled ? (
               <button
                 type="button"
