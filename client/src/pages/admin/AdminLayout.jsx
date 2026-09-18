@@ -112,9 +112,9 @@ const AdminLayout = () => {
 
   return (
     <div className="flex min-h-screen bg-obsidian">
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-obsidian-border bg-obsidian-light md:flex">
-        <div className="flex items-center gap-3 border-b border-obsidian-border px-6 py-5">
-          <img src={logo} alt="PDS" className="h-10 w-10 rounded-full" />
+      <aside className="hidden w-64 shrink-0 flex-col border-r border-obsidian-border bg-gradient-to-b from-obsidian-light to-obsidian md:flex">
+        <div className="flex items-center gap-3 border-b border-obsidian-border px-5 py-6">
+          <div className="relative"><img src={logo} alt="PDS" className="h-11 w-11 rounded-full border border-gold-400/50 shadow-gold-sm" /><span className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2 border-obsidian-light bg-green-400" aria-hidden="true" /></div>
           <div>
             <p className="font-display text-sm font-bold text-ivory">
               PDS Admin
@@ -123,7 +123,7 @@ const AdminLayout = () => {
           </div>
         </div>
 
-        <nav className="flex-none space-y-2 px-3 py-4">
+        <nav className="flex-none space-y-1 px-3 py-5">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -132,9 +132,9 @@ const AdminLayout = () => {
                 to={item.to}
                 end={item.end}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                  `group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
                     isActive
-                      ? "bg-gold-400/10 text-gold-400"
+                      ? "bg-gold-400/10 text-gold-400 shadow-[inset_3px_0_0_0_rgba(240,180,60,1)]"
                       : "text-ivory/60 hover:bg-obsidian-surface hover:text-ivory"
                   }`
                 }
@@ -167,8 +167,8 @@ const AdminLayout = () => {
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden">
-        <header className="hidden items-center justify-between border-b border-obsidian-border bg-obsidian-light px-8 py-3 md:flex">
+      <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden bg-[radial-gradient(circle_at_80%_0%,rgba(212,164,66,0.05),transparent_28%)]">
+        <header className="hidden min-h-[68px] items-center justify-between border-b border-obsidian-border bg-obsidian-light/95 px-8 py-3 backdrop-blur md:flex">
           <div className="flex items-center gap-2">
             {!pushEnabled ? (
               <button
@@ -323,7 +323,7 @@ const AdminLayout = () => {
           </div>
         )}
 
-        <main className="flex-1 p-5 sm:p-8">
+        <main className="flex-1 p-4 sm:p-7 lg:p-8">
           <Outlet />
         </main>
       </div>
