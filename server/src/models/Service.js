@@ -4,6 +4,8 @@ const serviceSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true },
     icon: { type: String, default: "Sparkles" },
+    image: { type: String, default: "" },
+    galleryImages: [{ type: String }],
     shortDescription: { type: String, required: true },
     fullDescription: { type: String, required: true },
     features: [{ type: String }],
