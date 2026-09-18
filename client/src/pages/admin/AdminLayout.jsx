@@ -9,6 +9,8 @@ import {
   MessageSquareQuote,
   LogOut,
   ExternalLink,
+  Menu,
+  X,
   Bell,
   Clock3,
   Star,
@@ -39,6 +41,7 @@ const AdminLayout = () => {
   const [notificationLoading, setNotificationLoading] = useState(false);
   const [pushLoading, setPushLoading] = useState(false);
   const [pushEnabled, setPushEnabled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const loadNotifications = useCallback(async (showLoading = false) => {
     try {
@@ -266,6 +269,15 @@ const AdminLayout = () => {
 
             <button
               type="button"
+              onClick={() => setMobileMenuOpen((previous) => !previous)}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-obsidian-border text-ivory/60"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? <X size={17} /> : <Menu size={17} />}
+            </button>
+            <button
+              type="button"
               onClick={handleLogout}
               className="text-xs text-red-400"
             >
@@ -273,6 +285,43 @@ const AdminLayout = () => {
             </button>
           </div>
         </header>
+
+        {mobileMenuOpen && (
+          <div className="border-b border-obsidian-border bg-obsidian-light px-4 py-3 md:hidden">
+            <nav className="grid gap-1">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.end}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium ${
+                        isActive
+                          ? "bg-gold-400/10 text-gold-400"
+                          : "text-ivory/60 hover:bg-obsidian-surface hover:text-ivory"
+                      }`
+                    }
+                  >
+                    <Icon size={17} />
+                    {item.label}
+                  </NavLink>
+                );
+              })}
+              <a
+                href="/"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm text-ivory/60 hover:bg-obsidian-surface hover:text-ivory"
+              >
+                <ExternalLink size={17} />
+                View Site
+              </a>
+            </nav>
+          </div>
+        )}
 
         <main className="flex-1 p-5 sm:p-8">
           <Outlet />
