@@ -14,7 +14,8 @@ const fallbackImages = {
 
 const ServiceCard = ({ service, index = 0 }) => {
   const Icon = Icons[service.icon] || Icons.Sparkles;
-  const image = service.image || fallbackImages[service.title];
+  const fallbackList = Object.values(fallbackImages);
+  const image = service.image || fallbackImages[service.title] || fallbackList[index % fallbackList.length];
 
   return (
     <motion.article
