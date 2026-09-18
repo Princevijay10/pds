@@ -196,7 +196,7 @@ const Home = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-display text-sm font-bold text-ivory">Prince Digital Studio</p>
-                    <p className="mt-1 text-[10px] tracking-[0.18em] text-gold-400">DESIGN · DEVELOP · GROW</p>
+                    <p className="mt-1 text-xs tracking-[0.18em] text-gold-400">DESIGN · DEVELOP · GROW</p>
                   </div>
                   <div className="h-8 w-8 rounded-full border border-gold-400/30 bg-gold-400/10" aria-hidden="true" />
                 </div>
@@ -204,7 +204,7 @@ const Home = () => {
               <div className="grid gap-5 p-6 sm:grid-cols-[1.2fr_0.8fr]">
                 <div className="rounded-xl border border-gold-400/20 bg-obsidian p-6">
                   <span className="eyebrow">Digital Studio</span>
-                  <h3 className="mt-3 font-display text-2xl font-bold leading-tight text-ivory">
+                  <h2 className="mt-3 font-display text-2xl font-bold leading-tight text-ivory">
                     Premium digital experiences.
                   </h3>
                   <p className="mt-3 text-xs leading-relaxed text-ivory/50">
@@ -215,7 +215,7 @@ const Home = () => {
                 <div className="grid gap-3">
                   <div className="rounded-xl border border-obsidian-border bg-obsidian p-4">
                     <p className="text-xs font-semibold text-ivory">Website Design</p>
-                    <p className="mt-1 text-[11px] text-ivory/45">UI / UX</p>
+                    <p className="mt-1 text-xs text-ivory/45">UI / UX</p>
                   </div>
                   <div className="rounded-xl border border-obsidian-border bg-obsidian p-4">
                     <p className="text-xs font-semibold text-ivory">Brand Identity</p>
