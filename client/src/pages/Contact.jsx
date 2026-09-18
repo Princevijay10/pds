@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Phone, Mail, MapPin, Instagram, Facebook, Send } from "lucide-react";
 import toast from "react-hot-toast";
@@ -21,6 +21,15 @@ const initialForm = { name: "", email: "", phone: "", service: "", budget: "", m
 
 const Contact = () => {
   const [form, setForm] = useState(initialForm);
+  const [queryService, setQueryService] = useState("");
+
+  useEffect(() => {
+    const serviceFromUrl = new URLSearchParams(window.location.search).get("service")?.trim() || "";
+    if (serviceFromUrl) {
+      setQueryService(serviceFromUrl);
+      setForm((previous) => ({ ...previous, service: serviceFromUrl }));
+    }
+  }, []);
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -194,6 +203,9 @@ const Contact = () => {
                   className="w-full rounded-lg border border-obsidian-border bg-obsidian px-4 py-3 text-sm text-ivory focus:border-gold-400 focus:outline-none"
                 >
                   <option value="">Select a service</option>
+                  {queryService && !services.includes(queryService) && (
+                    <option value={queryService}>{queryService}</option>
+                  )}
                   {services.map((s) => (
                     <option key={s} value={s}>{s}</option>
                   ))}
