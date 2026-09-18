@@ -209,7 +209,7 @@ const Dashboard = () => {
       {data?.recentLeads?.length > 0 && (
         <div className="mt-10">
           <div className="flex items-start justify-between gap-3">
-            <div>
+            <div className="px-5">
               <div className="flex items-center gap-3">
                 <h2 className="font-display text-lg font-bold text-ivory">
                   Recent Enquiries
