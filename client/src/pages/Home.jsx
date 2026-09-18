@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { ArrowRight, Star, Crown, Globe, Palette, Share2, ArrowUpRight } from "lucide-react";
 import SEO from "../components/SEO.jsx";
 import ServiceCard from "../components/ServiceCard.jsx";
@@ -367,4 +368,5 @@ const Home = () => {
 };
 
 export default Home;
+
 
