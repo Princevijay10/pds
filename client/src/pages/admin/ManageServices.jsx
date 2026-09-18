@@ -16,7 +16,7 @@ const emptyForm = {
   active: true,
 };
 
-const iconOptions = ["LayoutTemplate", "Code2", "PenTool", "Share2", "Crown", "Sparkles", "Palette", "Camera"];
+const iconOptions = ["Globe2", "Code2", "Palette", "PenTool", "Share2", "Video", "PenLine", "Megaphone", "Camera", "Sparkles"];
 
 const ManageServices = () => {
   const [services, setServices] = useState([]);
