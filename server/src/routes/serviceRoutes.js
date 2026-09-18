@@ -23,6 +23,15 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.get("/admin", protect, adminOnly, async (req, res, next) => {
+  try {
+    const services = await Service.find().sort({ order: 1 });
+    res.json({ success: true, count: services.length, services });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get("/:id", async (req, res, next) => {
   try {
     if (!isValidId(req.params.id)) {
@@ -31,15 +40,6 @@ router.get("/:id", async (req, res, next) => {
     const service = await Service.findOne({ _id: req.params.id, active: true });
     if (!service) return res.status(404).json({ success: false, message: "Service not found" });
     res.json({ success: true, service });
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.get("/admin", protect, adminOnly, async (req, res, next) => {
-  try {
-    const services = await Service.find().sort({ order: 1 });
-    res.json({ success: true, count: services.length, services });
   } catch (err) {
     next(err);
   }
