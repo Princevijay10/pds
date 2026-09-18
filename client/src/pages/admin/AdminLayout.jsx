@@ -159,7 +159,7 @@ const AdminLayout = () => {
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm text-ivory/60 hover:bg-red-500/10 hover:text-red-400"
+            className="admin-btn admin-btn-ghost w-full justify-start hover:bg-red-500/10 hover:text-red-400"
           >
             <LogOut size={17} />
             Logout
@@ -175,7 +175,7 @@ const AdminLayout = () => {
                 type="button"
                 onClick={handleEnablePush}
                 disabled={pushLoading}
-                className="rounded-lg border border-gold-400/30 px-3 py-2 text-xs font-semibold text-gold-400 hover:bg-gold-400/10 disabled:opacity-50"
+                className="admin-btn admin-btn-secondary !px-3 !py-2 !text-xs !border-gold-400/30 !text-gold-400 hover:!bg-gold-400/10"
               >
                 {pushLoading ? "Enabling..." : "Enable Mobile Alerts"}
               </button>
@@ -184,7 +184,7 @@ const AdminLayout = () => {
                 type="button"
                 onClick={handleTestPush}
                 disabled={pushLoading}
-                className="rounded-lg border border-green-400/30 px-3 py-2 text-xs font-semibold text-green-400 hover:bg-green-400/10 disabled:opacity-50"
+                className="admin-btn admin-btn-secondary !px-3 !py-2 !text-xs !border-green-400/30 !text-green-400 hover:!bg-green-400/10"
               >
                 {pushLoading ? "Sending..." : "Test Mobile Alert"}
               </button>
@@ -194,7 +194,7 @@ const AdminLayout = () => {
             <button
               type="button"
               onClick={() => setShowNotifications((previous) => !previous)}
-              className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-obsidian-border text-ivory/60 transition hover:border-gold-400/40 hover:text-gold-400"
+              className="admin-icon-btn relative h-10 w-10"
               aria-label="Notifications"
               aria-expanded={showNotifications}
             >
@@ -234,7 +234,7 @@ const AdminLayout = () => {
               type="button"
               onClick={pushEnabled ? handleTestPush : handleEnablePush}
               disabled={pushLoading}
-              className="rounded-lg border border-gold-400/30 px-2.5 py-2 text-[10px] font-semibold text-gold-400 disabled:opacity-50"
+              className="admin-btn admin-btn-secondary !px-2.5 !py-2 !text-[10px] !border-gold-400/30 !text-gold-400"
               title={pushEnabled ? "Send test notification" : "Enable mobile notifications"}
             >
               {pushLoading ? "..." : pushEnabled ? "Test" : "Alerts"}
@@ -243,7 +243,7 @@ const AdminLayout = () => {
               <button
                 type="button"
                 onClick={() => setShowNotifications((previous) => !previous)}
-                className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-obsidian-border text-ivory/60"
+                className="admin-icon-btn relative"
                 aria-label="Notifications"
                 aria-expanded={showNotifications}
               >
@@ -270,7 +270,7 @@ const AdminLayout = () => {
             <button
               type="button"
               onClick={() => setMobileMenuOpen((previous) => !previous)}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-obsidian-border text-ivory/60"
+              className="admin-icon-btn"
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileMenuOpen}
             >
@@ -279,7 +279,7 @@ const AdminLayout = () => {
             <button
               type="button"
               onClick={handleLogout}
-              className="text-xs text-red-400"
+              className="admin-btn admin-btn-ghost !p-0 !text-xs !text-red-400 hover:!bg-transparent"
             >
               Logout
             </button>
@@ -356,7 +356,7 @@ const NotificationDropdown = ({
           type="button"
           onClick={onRefresh}
           disabled={loading}
-          className="text-[10px] text-gold-400 hover:text-gold-300 disabled:opacity-50"
+          className="admin-btn admin-btn-ghost !p-0 !text-[10px] !text-gold-400 hover:!text-gold-300"
         >
           {loading ? "Refreshing..." : "Refresh"}
         </button>
@@ -366,7 +366,7 @@ const NotificationDropdown = ({
         <button
           type="button"
           onClick={() => onNavigate("/admin/leads")}
-          className="flex w-full items-center gap-3 px-4 py-4 text-left transition hover:bg-obsidian-surface"
+          className="admin-btn admin-btn-ghost flex w-full items-center justify-start gap-3 !px-4 !py-4 !text-left"
         >
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold-400/10 text-gold-400">
             <Inbox size={16} />
@@ -393,7 +393,7 @@ const NotificationDropdown = ({
         <button
           type="button"
           onClick={() => onNavigate("/admin/testimonials")}
-          className="flex w-full items-center gap-3 px-4 py-4 text-left transition hover:bg-obsidian-surface"
+          className="admin-btn admin-btn-ghost flex w-full items-center justify-start gap-3 !px-4 !py-4 !text-left"
         >
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold-400/10 text-gold-400">
             <Star size={16} />
