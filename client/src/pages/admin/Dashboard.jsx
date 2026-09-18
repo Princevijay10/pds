@@ -174,7 +174,7 @@ const Dashboard = () => {
               <Link
                 key={card.label}
                 to={card.link}
-                className={`card-surface flex items-center gap-5 px-7 py-6 transition hover:border-gold-400/40 ${
+                className={`group card-surface flex items-center gap-5 px-7 py-6 transition hover:border-gold-400/40 ${
                   card.highlight
                     ? "border-gold-400/30"
                     : ""
@@ -193,6 +193,12 @@ const Dashboard = () => {
                     {card.label}
                   </p>
                 </div>
+
+                <ArrowRight
+                  size={16}
+                  aria-hidden="true"
+                  className="ml-auto text-ivory/30 transition group-hover:text-gold-400"
+                />
               </Link>
             );
           })}
