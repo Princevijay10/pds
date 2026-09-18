@@ -7,7 +7,6 @@ import ServiceCard from "../components/ServiceCard.jsx";
 import PortfolioCard from "../components/PortfolioCard.jsx";
 import api from "../utils/api.js";
 import logo from "../assets/logo.jpg";
-import banner from "../assets/banner.jpg";
 import ReviewForm from "../components/ReviewForm.jsx";
 
 const statLabels = [
@@ -183,11 +182,47 @@ const Home = () => {
             className="relative flex justify-center"
           >
             <div className="absolute -inset-6 rounded-[2rem] bg-gold-gradient opacity-20 blur-3xl" />
-            <img
-              src={banner}
-              alt="Prince Digital Studio — design and development showcase"
-              className="relative w-full max-w-xl rounded-2xl border border-gold-400/20 shadow-2xl"
-            />
+            <div
+              role="img"
+              aria-label="Prince Digital Studio premium website design mockup"
+              className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-gold-400/20 bg-obsidian-surface shadow-2xl"
+            >
+              <div className="border-b border-obsidian-border px-5 py-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-display text-sm font-bold text-ivory">Prince Digital Studio</p>
+                    <p className="mt-1 text-[10px] tracking-[0.18em] text-gold-400">DESIGN · DEVELOP · GROW</p>
+                  </div>
+                  <div className="h-8 w-8 rounded-full border border-gold-400/30 bg-gold-400/10" aria-hidden="true" />
+                </div>
+              </div>
+              <div className="grid gap-5 p-6 sm:grid-cols-[1.2fr_0.8fr]">
+                <div className="rounded-xl border border-gold-400/20 bg-obsidian p-6">
+                  <span className="eyebrow">Digital Studio</span>
+                  <h3 className="mt-3 font-display text-2xl font-bold leading-tight text-ivory">
+                    Premium digital experiences.
+                  </h3>
+                  <p className="mt-3 text-xs leading-relaxed text-ivory/50">
+                    Clean interfaces, strong brands, and thoughtful development built for growth.
+                  </p>
+                  <div className="mt-5 h-2 w-24 rounded-full bg-gold-400/70" aria-hidden="true" />
+                </div>
+                <div className="grid gap-3">
+                  <div className="rounded-xl border border-obsidian-border bg-obsidian p-4">
+                    <p className="text-xs font-semibold text-ivory">Website Design</p>
+                    <p className="mt-1 text-[11px] text-ivory/45">UI / UX</p>
+                  </div>
+                  <div className="rounded-xl border border-obsidian-border bg-obsidian p-4">
+                    <p className="text-xs font-semibold text-ivory">Brand Identity</p>
+                    <p className="mt-1 text-[11px] text-ivory/45">Visual System</p>
+                  </div>
+                  <div className="rounded-xl border border-obsidian-border bg-obsidian p-4">
+                    <p className="text-xs font-semibold text-ivory">Development</p>
+                    <p className="mt-1 text-[11px] text-ivory/45">Modern Stack</p>
+                  </div>
+                </div>
+              </div>
+            </div>
             <img
               src={logo}
               alt="Prince Digital Studio medallion logo"
