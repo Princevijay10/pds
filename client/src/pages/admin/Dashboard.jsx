@@ -263,8 +263,17 @@ const Dashboard = () => {
                     </td>
 
                     <td className="px-5 py-3 text-right">
-                      <span className="inline-block rounded-full bg-gold-400/10 px-3 py-1 text-xs text-gold-400">
-                        {lead.status}
+                      <span
+                        className={`inline-block rounded-full px-3 py-1 text-xs ${
+                          lead.status?.toLowerCase() === "closed"
+                            ? "bg-ivory/10 text-ivory/60"
+                            : "bg-gold-400/10 text-gold-400"
+                        }`}
+                      >
+                        {lead.status
+                          ? lead.status.charAt(0).toUpperCase() +
+                            lead.status.slice(1).toLowerCase()
+                          : "—"}
                       </span>
                     </td>
                   </tr>
