@@ -5,6 +5,7 @@ import rateLimit from "express-rate-limit";
 import nodemailer from "nodemailer";
 import Contact from "../models/Contact.js";
 import { protect, adminOnly } from "../middleware/auth.js";
+import { sendPushToAllAdmins } from "../services/pushService.js";
 
 const router = express.Router();
 
@@ -90,6 +91,18 @@ router.post(
       });
 
       sendNotification(lead);
+
+      // Push notification is intentionally non-blocking: a push failure must
+      // never prevent the lead from being saved successfully.
+      sendPushToAllAdmins({
+        title: "New PDS Lead",
+        body: `${lead.name} sent a new ${lead.service || "project"} enquiry.`,
+        url: "/admin/leads",
+        tag: `lead-${lead._id}`,
+      }).catch((pushError) => {
+        console.error("Lead push notification failed:", pushError.message);
+      });
+
       res.status(201).json({
         success: true,
         message: "Thanks! Your message has been received. We'll get back to you within 24 hours.",

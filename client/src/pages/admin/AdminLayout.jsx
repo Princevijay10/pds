@@ -1,13 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Inbox,
   FolderKanban,
-  Sparkles,
+  BriefcaseBusiness,
   MessageSquareQuote,
   LogOut,
   ExternalLink,
+  Menu,
+  X,
   Bell,
   Clock3,
   Star,
@@ -15,12 +18,13 @@ import {
 import { useAuth } from "../../context/AuthContext.jsx";
 import logo from "../../assets/logo.jpg";
 import api from "../../utils/api.js";
+import { enablePushNotifications, sendPushTest } from "../../utils/pushNotifications.js";
 
 const navItems = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/admin/leads", label: "Leads", icon: Inbox },
   { to: "/admin/portfolio", label: "Portfolio", icon: FolderKanban },
-  { to: "/admin/services", label: "Services", icon: Sparkles },
+  { to: "/admin/services", label: "Services", icon: BriefcaseBusiness },
   {
     to: "/admin/testimonials",
     label: "Testimonials",
@@ -35,6 +39,9 @@ const AdminLayout = () => {
   const [pendingReviews, setPendingReviews] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notificationLoading, setNotificationLoading] = useState(false);
+  const [pushLoading, setPushLoading] = useState(false);
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const loadNotifications = useCallback(async (showLoading = false) => {
     try {
@@ -68,6 +75,31 @@ const AdminLayout = () => {
 
   const totalNotifications = newLeads + pendingReviews;
 
+  const handleEnablePush = async () => {
+    try {
+      setPushLoading(true);
+      await enablePushNotifications();
+      setPushEnabled(true);
+      toast.success("Mobile lead notifications enabled.");
+    } catch (error) {
+      toast.error(error.message || "Could not enable mobile notifications.");
+    } finally {
+      setPushLoading(false);
+    }
+  };
+
+  const handleTestPush = async () => {
+    try {
+      setPushLoading(true);
+      await sendPushTest();
+      toast.success("Test notification sent to your devices.");
+    } catch (error) {
+      toast.error(error.message || "Could not send test notification.");
+    } finally {
+      setPushLoading(false);
+    }
+  };
+
   const handleLogout = () => {
     logout();
     navigate("/admin/login");
@@ -91,7 +123,7 @@ const AdminLayout = () => {
           </div>
         </div>
 
-        <nav className="flex-1 space-y-1 px-3 py-6">
+        <nav className="flex-none space-y-2 px-3 py-4">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -114,7 +146,7 @@ const AdminLayout = () => {
           })}
         </nav>
 
-        <div className="space-y-1 border-t border-obsidian-border px-3 py-4">
+        <div className="space-y-1 border-t border-obsidian-border/80 px-3 py-4">
           <a
             href="/"
             target="_blank"
@@ -127,7 +159,7 @@ const AdminLayout = () => {
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm text-ivory/60 hover:bg-red-500/10 hover:text-red-400"
+            className="admin-btn admin-btn-ghost w-full justify-start hover:bg-red-500/10 hover:text-red-400"
           >
             <LogOut size={17} />
             Logout
@@ -136,12 +168,33 @@ const AdminLayout = () => {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden">
-        <header className="hidden items-center justify-end border-b border-obsidian-border bg-obsidian-light px-6 py-3 md:flex">
+        <header className="hidden items-center justify-between border-b border-obsidian-border bg-obsidian-light px-6 py-3 md:flex">
+          <div className="flex items-center gap-2">
+            {!pushEnabled ? (
+              <button
+                type="button"
+                onClick={handleEnablePush}
+                disabled={pushLoading}
+                className="admin-btn admin-btn-secondary !px-3 !py-2 !text-xs !border-gold-400/30 !text-gold-400 hover:!bg-gold-400/10"
+              >
+                {pushLoading ? "Enabling..." : "Enable Mobile Alerts"}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleTestPush}
+                disabled={pushLoading}
+                className="admin-btn admin-btn-ghost !px-3 !py-2 !text-xs !text-ivory/50 hover:!bg-obsidian-surface hover:!text-ivory"
+              >
+                {pushLoading ? "Sending..." : "Test Mobile Alert"}
+              </button>
+            )}
+          </div>
           <div className="relative">
             <button
               type="button"
               onClick={() => setShowNotifications((previous) => !previous)}
-              className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-obsidian-border text-ivory/60 transition hover:border-gold-400/40 hover:text-gold-400"
+              className="admin-icon-btn relative h-10 w-10"
               aria-label="Notifications"
               aria-expanded={showNotifications}
             >
@@ -177,11 +230,20 @@ const AdminLayout = () => {
           </div>
 
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={pushEnabled ? handleTestPush : handleEnablePush}
+              disabled={pushLoading}
+              className="admin-btn admin-btn-secondary !px-2.5 !py-2 !text-[10px] !border-gold-400/30 !text-gold-400"
+              title={pushEnabled ? "Send test notification" : "Enable mobile notifications"}
+            >
+              {pushLoading ? "..." : pushEnabled ? "Test" : "Alerts"}
+            </button>
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setShowNotifications((previous) => !previous)}
-                className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-obsidian-border text-ivory/60"
+                className="admin-icon-btn relative"
                 aria-label="Notifications"
                 aria-expanded={showNotifications}
               >
@@ -207,13 +269,59 @@ const AdminLayout = () => {
 
             <button
               type="button"
+              onClick={() => setMobileMenuOpen((previous) => !previous)}
+              className="admin-icon-btn"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? <X size={17} /> : <Menu size={17} />}
+            </button>
+            <button
+              type="button"
               onClick={handleLogout}
-              className="text-xs text-red-400"
+              className="admin-btn admin-btn-ghost !p-0 !text-xs !text-red-400 hover:!bg-transparent"
             >
               Logout
             </button>
           </div>
         </header>
+
+        {mobileMenuOpen && (
+          <div className="border-b border-obsidian-border bg-obsidian-light px-4 py-3 md:hidden">
+            <nav className="grid gap-1">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.end}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium ${
+                        isActive
+                          ? "bg-gold-400/10 text-gold-400"
+                          : "text-ivory/60 hover:bg-obsidian-surface hover:text-ivory"
+                      }`
+                    }
+                  >
+                    <Icon size={17} />
+                    {item.label}
+                  </NavLink>
+                );
+              })}
+              <a
+                href="/"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm text-ivory/60 hover:bg-obsidian-surface hover:text-ivory"
+              >
+                <ExternalLink size={17} />
+                View Site
+              </a>
+            </nav>
+          </div>
+        )}
 
         <main className="flex-1 p-5 sm:p-8">
           <Outlet />
@@ -248,7 +356,7 @@ const NotificationDropdown = ({
           type="button"
           onClick={onRefresh}
           disabled={loading}
-          className="text-[10px] text-gold-400 hover:text-gold-300 disabled:opacity-50"
+          className="admin-btn admin-btn-ghost !p-0 !text-[10px] !text-gold-400 hover:!text-gold-300"
         >
           {loading ? "Refreshing..." : "Refresh"}
         </button>
@@ -258,7 +366,7 @@ const NotificationDropdown = ({
         <button
           type="button"
           onClick={() => onNavigate("/admin/leads")}
-          className="flex w-full items-center gap-3 px-4 py-4 text-left transition hover:bg-obsidian-surface"
+          className="admin-btn admin-btn-ghost flex w-full items-center justify-start gap-3 !px-4 !py-4 !text-left"
         >
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold-400/10 text-gold-400">
             <Inbox size={16} />
@@ -285,7 +393,7 @@ const NotificationDropdown = ({
         <button
           type="button"
           onClick={() => onNavigate("/admin/testimonials")}
-          className="flex w-full items-center gap-3 px-4 py-4 text-left transition hover:bg-obsidian-surface"
+          className="admin-btn admin-btn-ghost flex w-full items-center justify-start gap-3 !px-4 !py-4 !text-left"
         >
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold-400/10 text-gold-400">
             <Star size={16} />

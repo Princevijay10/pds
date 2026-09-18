@@ -129,7 +129,7 @@ const Dashboard = () => {
   return (
     <div>
       {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <div className="flex flex-wrap items-start justify-start gap-4">
         <div>
           <h1 className="font-display text-2xl font-bold text-ivory">
             Dashboard
@@ -144,7 +144,7 @@ const Dashboard = () => {
           type="button"
           onClick={() => loadDashboard(true)}
           disabled={refreshing}
-          className="flex items-center gap-2 rounded-lg border border-obsidian-border px-4 py-2 text-sm text-ivory/60 transition hover:border-gold-400/40 hover:text-gold-400 disabled:opacity-50"
+          className="admin-btn admin-btn-secondary"
         >
           <RefreshCw
             size={15}
@@ -174,7 +174,7 @@ const Dashboard = () => {
               <Link
                 key={card.label}
                 to={card.link}
-                className={`card-surface flex items-center gap-4 p-6 transition hover:border-gold-400/40 ${
+                className={`group card-surface flex items-center gap-5 px-7 py-6 transition hover:border-gold-400/40 ${
                   card.highlight
                     ? "border-gold-400/30"
                     : ""
@@ -185,7 +185,7 @@ const Dashboard = () => {
                 </div>
 
                 <div>
-                  <p className="font-display text-2xl font-bold text-ivory">
+                  <p className="font-sans text-2xl font-bold text-ivory tabular-nums">
                     {card.value}
                   </p>
 
@@ -193,6 +193,12 @@ const Dashboard = () => {
                     {card.label}
                   </p>
                 </div>
+
+                <ArrowRight
+                  size={16}
+                  aria-hidden="true"
+                  className="ml-auto text-ivory/30 transition group-hover:text-gold-400"
+                />
               </Link>
             );
           })}
@@ -202,24 +208,26 @@ const Dashboard = () => {
       {/* Recent Enquiries */}
       {data?.recentLeads?.length > 0 && (
         <div className="mt-10">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <h2 className="font-display text-lg font-bold text-ivory">
-                Recent Enquiries
-              </h2>
+          <div className="flex items-start justify-between gap-3">
+            <div className="px-5">
+              <div className="flex items-center gap-3">
+                <h2 className="font-display text-lg font-bold text-ivory">
+                  Recent Enquiries
+                </h2>
+
+                <Link
+                  to="/admin/leads"
+                  className="flex items-center gap-1 text-xs text-gold-400 hover:text-gold-300"
+                >
+                  View all
+                  <ArrowRight size={13} />
+                </Link>
+              </div>
 
               <p className="mt-1 text-xs text-ivory/40">
                 Latest customer enquiries received through the website.
               </p>
             </div>
-
-            <Link
-              to="/admin/leads"
-              className="flex items-center gap-1 text-xs text-gold-400 hover:text-gold-300"
-            >
-              View all
-              <ArrowRight size={13} />
-            </Link>
           </div>
 
           <div className="card-surface mt-4 overflow-x-auto">
@@ -238,7 +246,7 @@ const Dashboard = () => {
                     Service
                   </th>
 
-                  <th className="px-5 py-3">
+                  <th className="px-5 py-3 text-right">
                     Status
                   </th>
                 </tr>
@@ -262,9 +270,18 @@ const Dashboard = () => {
                       {lead.service || "-"}
                     </td>
 
-                    <td className="px-5 py-3">
-                      <span className="rounded-full bg-gold-400/10 px-3 py-1 text-xs text-gold-400">
-                        {lead.status}
+                    <td className="px-5 py-3 text-right">
+                      <span
+                        className={`inline-block rounded-full px-3 py-1 text-xs ${
+                          lead.status?.toLowerCase() === "closed"
+                            ? "bg-ivory/10 text-ivory/60"
+                            : "bg-gold-400/10 text-gold-400"
+                        }`}
+                      >
+                        {lead.status
+                          ? lead.status.charAt(0).toUpperCase() +
+                            lead.status.slice(1).toLowerCase()
+                          : "—"}
                       </span>
                     </td>
                   </tr>
@@ -349,7 +366,7 @@ const Dashboard = () => {
                   <button
                     type="button"
                     onClick={() => approveReview(review)}
-                    className="flex items-center gap-2 rounded-lg bg-gold-400 px-4 py-2 text-xs font-semibold text-black transition hover:bg-gold-300"
+                    className="admin-btn admin-btn-primary !text-xs"
                   >
                     <Check size={14} />
                     Approve

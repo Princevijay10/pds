@@ -131,14 +131,14 @@ const ManagePortfolio = () => {
           <h1 className="font-display text-2xl font-bold text-ivory">Portfolio</h1>
           <p className="mt-1 text-sm text-ivory/50">Manage the projects shown on your public portfolio.</p>
         </div>
-        <button onClick={() => { resetForm(); setShowForm(true); }} className="btn-gold px-5 py-2.5 text-sm">
+        <button onClick={() => { resetForm(); setShowForm(true); }} className="admin-btn admin-btn-primary">
           <Plus size={16} /> Add Project
         </button>
       </div>
 
       {showForm && (
         <form onSubmit={handleSubmit} className="card-surface relative mt-6 space-y-5 p-6">
-          <button type="button" onClick={resetForm} className="absolute right-5 top-5 text-ivory/40 hover:text-ivory">
+          <button type="button" onClick={resetForm} className="admin-icon-btn absolute right-5 top-5 !border-transparent">
             <X size={18} />
           </button>
           <h2 className="font-display text-lg font-bold text-ivory">{editingId ? "Edit Project" : "New Project"}</h2>
@@ -182,7 +182,7 @@ const ManagePortfolio = () => {
             </label>
           </div>
 
-          <button type="submit" disabled={saving} className="btn-gold px-6 py-2.5 text-sm disabled:opacity-60">
+          <button type="submit" disabled={saving} className="admin-btn admin-btn-primary !px-6">
             {saving ? "Saving…" : editingId ? "Update Project" : "Create Project"}
           </button>
         </form>
@@ -204,10 +204,10 @@ const ManagePortfolio = () => {
                 </div>
                 <p className="mt-1 text-xs text-ivory/50">{p.category}</p>
                 <div className="mt-4 flex gap-2">
-                  <button onClick={() => handleEdit(p)} className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-obsidian-border py-2 text-xs text-ivory/70 hover:border-gold-400/40 hover:text-gold-400">
+                  <button onClick={() => handleEdit(p)} className="admin-btn admin-btn-secondary flex-1 !py-2 !text-xs">
                     <Pencil size={13} /> Edit
                   </button>
-                  <button onClick={() => deleteProject(p._id)} className="flex items-center justify-center rounded-lg border border-obsidian-border px-3 text-red-400/80 hover:border-red-400/40">
+                  <button onClick={() => deleteProject(p._id)} className="admin-icon-btn admin-btn-danger !w-10">
                     <Trash2 size={13} />
                   </button>
                 </div>

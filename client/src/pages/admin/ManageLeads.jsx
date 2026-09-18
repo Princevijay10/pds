@@ -200,7 +200,7 @@ const ManageLeads = () => {
             fetchLeads({ pageToLoad: 1, showRefresh: true })
           }
           disabled={refreshing}
-          className="flex items-center gap-2 rounded-lg border border-obsidian-border px-4 py-2 text-sm text-ivory/60 transition hover:border-gold-400/40 hover:text-gold-400 disabled:opacity-50"
+          className="admin-btn admin-btn-secondary"
         >
           <RefreshCw
             size={15}
@@ -386,7 +386,7 @@ const ManageLeads = () => {
                     onClick={() =>
                       deleteLead(lead._id)
                     }
-                    className="rounded-lg p-2 text-ivory/40 hover:bg-red-500/10 hover:text-red-400"
+                    className="admin-icon-btn !border-transparent text-ivory/40 hover:!border-red-400/30 hover:!bg-red-500/10 hover:!text-red-400"
                     title="Delete lead"
                   >
                     <Trash2 size={16} />
@@ -440,7 +440,7 @@ const ManageLeads = () => {
                 onClick={() =>
                   setSelectedLead(lead)
                 }
-                className="mt-4 text-xs font-medium text-gold-400 hover:text-gold-300"
+                className="admin-btn admin-btn-ghost !mt-4 !p-0 !text-xs !font-medium !text-gold-400 hover:!text-gold-300"
               >
                 View full details →
               </button>
@@ -458,7 +458,7 @@ const ManageLeads = () => {
             type="button"
             onClick={loadMore}
             disabled={loadingMore}
-            className="rounded-lg border border-obsidian-border px-6 py-2.5 text-sm text-ivory/70 transition hover:border-gold-400/40 hover:text-gold-400 disabled:opacity-50"
+            className="admin-btn admin-btn-secondary !px-6"
           >
             {loadingMore
               ? "Loading..."
@@ -498,7 +498,7 @@ const ManageLeads = () => {
                 onClick={() =>
                   setSelectedLead(null)
                 }
-                className="rounded-lg p-2 text-ivory/40 hover:bg-obsidian-surface hover:text-ivory"
+                className="admin-icon-btn !border-transparent"
                 aria-label="Close"
               >
                 <X size={18} />
@@ -649,7 +649,7 @@ const ManageLeads = () => {
                 onClick={() =>
                   setSelectedLead(null)
                 }
-                className="rounded-lg bg-gold-400 px-5 py-2.5 text-sm font-semibold text-black hover:bg-gold-300"
+                className="admin-btn admin-btn-primary !px-5"
               >
                 Done
               </button>

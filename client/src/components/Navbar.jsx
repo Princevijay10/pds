@@ -38,7 +38,7 @@ const Navbar = () => {
           <img src={logo} alt="Prince Digital Studio logo" className="h-12 w-12 rounded-full object-cover" />
           <div className="hidden flex-col sm:flex">
             <span className="font-display text-lg font-bold leading-tight text-ivory">Prince Digital Studio</span>
-            <span className="text-xs tracking-[0.3em] uppercase text-gold-400">Design · Develop · Grow</span>
+            <span className="text-xs tracking-[0.3em] text-gold-400">Design · Develop · Grow</span>
           </div>
         </Link>
 
