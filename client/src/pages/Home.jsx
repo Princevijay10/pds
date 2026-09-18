@@ -84,6 +84,7 @@ const Home = () => {
   const [projectsError, setProjectsError] = useState(false);
   const [testimonialsError, setTestimonialsError] = useState(false);
   const [stats, setStats] = useState(null);
+  const [showHomepageStats, setShowHomepageStats] = useState(true);
 
   useEffect(() => {
     api.get("/services")
@@ -95,6 +96,10 @@ const Home = () => {
       .then((res) => setProjects(res.data.projects?.slice(0, 6) || []))
       .catch(() => setProjectsError(true))
       .finally(() => setProjectsLoading(false));
+
+    api.get("/site-settings/public")
+      .then((res) => setShowHomepageStats(res.data.settings?.showHomepageStats !== false))
+      .catch(() => setShowHomepageStats(true));
 
     api.get("/testimonials")
       .then((res) => setTestimonials(res.data.testimonials?.slice(0, 3) || []))
@@ -155,7 +160,7 @@ const Home = () => {
               </Link>
             </div>
 
-            <div className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-4">
+            {showHomepageStats && <div className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-4">
               {statLabels.map((s) => {
                 const value = stats?.[s.key];
                 const displayValue =
@@ -172,7 +177,7 @@ const Home = () => {
                   </div>
                 );
               })}
-            </div>
+            </div>}
           </motion.div>
 
           <motion.div
