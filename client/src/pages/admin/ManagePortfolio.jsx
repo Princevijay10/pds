@@ -16,6 +16,7 @@ const emptyForm = {
   title: "",
   category: categories[0],
   client: "",
+  deliveryDays: "",
   description: "",
   coverImage: "",
   liveUrl: "",
@@ -54,6 +55,7 @@ const ManagePortfolio = () => {
       title: p.title,
       category: p.category,
       client: p.client || "",
+      deliveryDays: p.deliveryDays ?? "",
       description: p.description,
       coverImage: p.coverImage,
       liveUrl: p.liveUrl || "",
@@ -89,7 +91,11 @@ const ManagePortfolio = () => {
       return;
     }
     setSaving(true);
-    const payload = { ...form, tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean) };
+    const payload = {
+      ...form,
+      deliveryDays: form.deliveryDays === "" ? undefined : Number(form.deliveryDays),
+      tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
+    };
     try {
       if (editingId) {
         await api.put(`/portfolio/${editingId}`, payload);
@@ -146,6 +152,7 @@ const ManagePortfolio = () => {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <input placeholder="Client name (optional)" value={form.client} onChange={(e) => setForm({ ...form, client: e.target.value })} className="rounded-lg border border-obsidian-border bg-obsidian px-4 py-2.5 text-sm text-ivory" />
+            <input type="number" min="1" max="365" placeholder="Delivery days (optional)" value={form.deliveryDays} onChange={(e) => setForm({ ...form, deliveryDays: e.target.value })} className="rounded-lg border border-obsidian-border bg-obsidian px-4 py-2.5 text-sm text-ivory" />
             <input placeholder="Live URL (optional)" value={form.liveUrl} onChange={(e) => setForm({ ...form, liveUrl: e.target.value })} className="rounded-lg border border-obsidian-border bg-obsidian px-4 py-2.5 text-sm text-ivory" />
           </div>
 
