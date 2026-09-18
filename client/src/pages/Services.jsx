@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import * as Icons from "lucide-react";
-import { Check, ArrowRight } from "lucide-react";
 import SEO from "../components/SEO.jsx";
+import ServiceCard from "../components/ServiceCard.jsx";
+import { ArrowRight, Sparkles } from "lucide-react";
 import api from "../utils/api.js";
 
 const Services = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    api
-      .get("/services")
-      .then((res) => setServices(res.data.services))
+    api.get("/services")
+      .then((res) => setServices(res.data.services || []))
+      .catch(() => setError("We could not load the services right now."))
       .finally(() => setLoading(false));
   }, []);
 
@@ -21,68 +22,89 @@ const Services = () => {
     <>
       <SEO
         title="Our Services"
-        description="Explore Prince Digital Studio's services: website design, website development, graphic design, social media design, and logo & brand identity."
+        description="Explore Prince Digital Studio's website, branding, graphic design, digital marketing, video, and content services."
         path="/services"
       />
 
-      <section className="section pt-16">
-        <div className="container-px mx-auto max-w-4xl text-center">
-          <span className="eyebrow justify-center">What We Offer</span>
-          <h1 className="mt-4 font-display text-3xl font-bold text-ivory sm:text-4xl lg:text-5xl">
-            Services Built to <span className="gold-text">Grow Your Brand</span>
-          </h1>
-          <p className="mt-5 text-ivory/60">
-            Every service is delivered with the same premium standard — clean execution,
-            honest communication, and results that matter.
-          </p>
+      <section className="relative overflow-hidden border-b border-obsidian-border">
+        <div className="absolute inset-0 bg-radial-glow opacity-60" />
+        <div className="container-px relative mx-auto max-w-6xl py-20 sm:py-28">
+          <div className="grid items-end gap-10 lg:grid-cols-[1.15fr_0.85fr]">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <span className="eyebrow"><Sparkles size={14} /> What We Offer</span>
+              <h1 className="mt-5 max-w-4xl font-display text-4xl font-bold leading-tight text-ivory sm:text-5xl lg:text-6xl">
+                Creative services built for <span className="gold-text">real growth.</span>
+              </h1>
+            </motion.div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="max-w-xl text-base leading-7 text-ivory/55 lg:pb-2"
+            >
+              From websites and brand identity to content and marketing, every service is designed
+              to make your business look credible, communicate clearly, and grow online.
+            </motion.p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section pt-14 sm:pt-20">
+        <div className="container-px mx-auto max-w-6xl">
+          <div className="mb-8 flex items-end justify-between gap-4">
+            <div>
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-400">Our Expertise</span>
+              <h2 className="mt-2 font-display text-2xl font-bold text-ivory sm:text-3xl">
+                Choose a service and explore it in detail.
+              </h2>
+            </div>
+            <Link to="/contact" className="hidden items-center gap-2 text-sm font-semibold text-gold-400 hover:text-gold-300 sm:inline-flex">
+              Have a custom requirement? <ArrowRight size={15} />
+            </Link>
+          </div>
+
+          {loading && (
+            <div className="space-y-6">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="card-surface h-64 animate-pulse" />
+              ))}
+            </div>
+          )}
+
+          {!loading && error && (
+            <div className="card-surface p-8 text-center text-sm text-ivory/55">{error}</div>
+          )}
+
+          {!loading && !error && services.length === 0 && (
+            <div className="card-surface p-8 text-center text-sm text-ivory/55">
+              Services will be available here shortly.
+            </div>
+          )}
+
+          {!loading && !error && services.length > 0 && (
+            <div className="space-y-6">
+              {services.map((service, index) => (
+                <ServiceCard key={service._id} service={service} index={index} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
       <section className="pb-24">
-        <div className="container-px mx-auto max-w-6xl space-y-6">
-          {loading &&
-            Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="card-surface h-40 animate-pulse" />
-            ))}
-
-          {services.map((s, i) => {
-            const Icon = Icons[s.icon] || Icons.Sparkles;
-            return (
-              <motion.div
-                key={s._id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.5, delay: i * 0.05 }}
-                className="card-surface grid gap-8 p-8 sm:p-10 lg:grid-cols-[auto_1fr_auto] lg:items-center"
-              >
-                <div className="badge-medallion h-16 w-16 text-gold-400">
-                  <Icon size={28} />
-                </div>
-                <div>
-                  <h2 className="font-display text-2xl font-bold text-ivory">{s.title}</h2>
-                  <p className="mt-2 text-sm leading-relaxed text-ivory/60">{s.fullDescription}</p>
-                  {s.features?.length > 0 && (
-                    <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-                      {s.features.map((f) => (
-                        <li key={f} className="flex items-center gap-2 text-sm text-ivory/70">
-                          <Check size={14} className="shrink-0 text-gold-400" /> {f}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-                <div className="flex flex-col items-start gap-3 lg:items-end">
-                  {s.startingPrice && (
-                    <span className="font-accent text-sm font-semibold text-gold-400">{s.startingPrice}</span>
-                  )}
-                  <Link to="/contact" className="btn-gold whitespace-nowrap px-6 py-3 text-sm">
-                    Enquire <ArrowRight size={16} />
-                  </Link>
-                </div>
-              </motion.div>
-            );
-          })}
+        <div className="container-px mx-auto max-w-6xl">
+          <div className="relative overflow-hidden rounded-2xl border border-gold-400/30 bg-gold-400/5 p-7 sm:p-9">
+            <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <span className="eyebrow">Need something specific?</span>
+                <h2 className="mt-2 font-display text-2xl font-bold text-ivory">Tell us what you want to build.</h2>
+                <p className="mt-2 text-sm text-ivory/55">Share your requirement and we will help you choose the right service.</p>
+              </div>
+              <Link to="/contact" className="btn-gold shrink-0 px-6 py-3 text-sm">
+                Enquiry Now <ArrowRight size={16} />
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </>
