@@ -202,24 +202,26 @@ const Dashboard = () => {
       {/* Recent Enquiries */}
       {data?.recentLeads?.length > 0 && (
         <div className="mt-10">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-start justify-between gap-3">
             <div>
-              <h2 className="font-display text-lg font-bold text-ivory">
-                Recent Enquiries
-              </h2>
+              <div className="flex items-center gap-3">
+                <h2 className="font-display text-lg font-bold text-ivory">
+                  Recent Enquiries
+                </h2>
+
+                <Link
+                  to="/admin/leads"
+                  className="flex items-center gap-1 text-xs text-gold-400 hover:text-gold-300"
+                >
+                  View all
+                  <ArrowRight size={13} />
+                </Link>
+              </div>
 
               <p className="mt-1 text-xs text-ivory/40">
                 Latest customer enquiries received through the website.
               </p>
             </div>
-
-            <Link
-              to="/admin/leads"
-              className="flex items-center gap-1 text-xs text-gold-400 hover:text-gold-300"
-            >
-              View all
-              <ArrowRight size={13} />
-            </Link>
           </div>
 
           <div className="card-surface mt-4 overflow-x-auto">
