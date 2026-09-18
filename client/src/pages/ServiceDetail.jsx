@@ -6,10 +6,32 @@ import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, Sparkles } from "lu
 import SEO from "../components/SEO.jsx";
 import api from "../utils/api.js";
 
-const fallbackImages = [
-  "https://images.unsplash.com/photo-1559028012-481c04fa7050?auto=format&fit=crop&w=1600&q=85",
-  "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
-];
+const fallbackImages = {
+  "Website Design & Development": [
+    "https://images.unsplash.com/photo-1559028012-481c04fa7050?auto=format&fit=crop&w=1600&q=85",
+    "https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=1200&q=80",
+  ],
+  "Brand Identity & Logo Design": [
+    "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=1600&q=85",
+    "https://images.unsplash.com/photo-1634942537034-2531766767d1?auto=format&fit=crop&w=1200&q=80",
+  ],
+  "Graphic Design": [
+    "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=1600&q=85",
+    "https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=1200&q=80",
+  ],
+  "Digital Marketing": [
+    "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=85",
+    "https://images.unsplash.com/photo-1557838923-2985c318be48?auto=format&fit=crop&w=1200&q=80",
+  ],
+  "Video Editing & Motion Graphics": [
+    "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1600&q=85",
+    "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1200&q=80",
+  ],
+  "Content Writing": [
+    "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1600&q=85",
+    "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=1200&q=80",
+  ],
+};
 
 const ServiceDetail = () => {
   const { id } = useParams();
@@ -41,7 +63,12 @@ const ServiceDetail = () => {
 
   const Icon = Icons[service.icon] || Icons.Sparkles;
   const images = [service.image, ...(service.galleryImages || [])].filter(Boolean);
-  const displayImages = images.length > 0 ? images.slice(0, 2) : fallbackImages;
+  const displayImages = images.length > 0
+    ? images.slice(0, 2)
+    : fallbackImages[service.title] || [
+        "https://images.unsplash.com/photo-1559028012-481c04fa7050?auto=format&fit=crop&w=1600&q=85",
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
+      ];
 
   return (
     <>
