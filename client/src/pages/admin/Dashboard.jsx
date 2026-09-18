@@ -20,6 +20,8 @@ const Dashboard = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [showHomepageStats, setShowHomepageStats] = useState(true);
+  const [savingStatsSetting, setSavingStatsSetting] = useState(false);
 
   const loadDashboard = useCallback(async (showRefresh = false) => {
     try {
@@ -154,6 +156,37 @@ const Dashboard = () => {
           {refreshing ? "Refreshing..." : "Refresh"}
         </button>
       </div>
+
+      <section className="card-surface mt-8 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between" aria-labelledby="homepage-stats-setting">
+        <div>
+          <h2 id="homepage-stats-setting" className="font-display text-base font-bold text-ivory">
+            Homepage Statistics
+          </h2>
+          <p className="mt-1 max-w-2xl text-xs leading-relaxed text-ivory/45">
+            Control whether the live Projects Delivered, Happy Clients, Years of Craft, and Avg. Turnaround statistics appear on the public homepage.
+          </p>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={showHomepageStats}
+          aria-label="Show homepage statistics"
+          onClick={toggleHomepageStats}
+          disabled={savingStatsSetting}
+          className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian ${
+            showHomepageStats
+              ? "border-gold-400 bg-gold-400"
+              : "border-obsidian-border bg-obsidian-surface"
+          }`}
+        >
+          <span
+            aria-hidden="true"
+            className={`h-5 w-5 rounded-full bg-ivory shadow transition-transform ${
+              showHomepageStats ? "translate-x-6" : "translate-x-1"
+            }`}
+          />
+        </button>
+      </section>
 
       {/* Dashboard Cards */}
       {loading ? (
