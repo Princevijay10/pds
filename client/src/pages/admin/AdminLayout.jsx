@@ -184,7 +184,7 @@ const AdminLayout = () => {
                 type="button"
                 onClick={handleTestPush}
                 disabled={pushLoading}
-                className="admin-btn admin-btn-secondary !px-3 !py-2 !text-xs !border-green-400/30 !text-green-400 hover:!bg-green-400/10"
+                className="admin-btn admin-btn-ghost !px-3 !py-2 !text-xs !text-ivory/50 hover:!bg-obsidian-surface hover:!text-ivory"
               >
                 {pushLoading ? "Sending..." : "Test Mobile Alert"}
               </button>
