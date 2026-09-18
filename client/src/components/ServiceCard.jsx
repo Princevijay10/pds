@@ -3,19 +3,38 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
-const fallbackImages = {
-  "Website Design & Development": "https://images.unsplash.com/photo-1559028012-481c04fa7050?auto=format&fit=crop&w=1200&q=80",
-  "Brand Identity & Logo Design": "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=1200&q=80",
-  "Graphic Design": "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=1200&q=80",
-  "Digital Marketing": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
-  "Video Editing & Motion Graphics": "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1200&q=80",
-  "Content Writing": "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=80",
+const fallbackImages = [
+  "https://images.unsplash.com/photo-1559028012-481c04fa7050?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=80",
+];
+
+const serviceIconMap = [
+  { match: ["website design"], icon: "LayoutTemplate" },
+  { match: ["website development"], icon: "Code2" },
+  { match: ["brand", "logo"], icon: "Fingerprint" },
+  { match: ["graphic"], icon: "PenTool" },
+  { match: ["social media"], icon: "Share2" },
+  { match: ["marketing"], icon: "Megaphone" },
+  { match: ["video", "motion"], icon: "Clapperboard" },
+  { match: ["content", "writing"], icon: "PenLine" },
+];
+
+const getServiceIcon = (title) => {
+  const normalized = title.toLowerCase();
+  const match = serviceIconMap.find(({ match }) =>
+    match.some((term) => normalized.includes(term))
+  );
+  return match?.icon || "Sparkles";
 };
 
 const ServiceCard = ({ service, index = 0 }) => {
-  const Icon = Icons[service.icon] || Icons.Sparkles;
-  const fallbackList = Object.values(fallbackImages);
-  const image = service.image || fallbackImages[service.title] || fallbackList[index % fallbackList.length];
+  const iconName = getServiceIcon(service.title);
+  const Icon = Icons[iconName] || Icons.Sparkles;
+  const image = service.image || fallbackImages[index % fallbackImages.length];
 
   return (
     <motion.article
@@ -51,11 +70,7 @@ const ServiceCard = ({ service, index = 0 }) => {
               <span className="eyebrow !text-[10px] !tracking-[0.18em]">PDS Service</span>
               <h2 className="mt-3 font-display text-2xl font-bold text-ivory">{service.title}</h2>
             </div>
-            {service.startingPrice && (
-              <span className="shrink-0 rounded-full border border-gold-400/20 bg-gold-400/5 px-3 py-1 text-xs font-semibold text-gold-400">
-                {service.startingPrice}
-              </span>
-            )}
+
           </div>
 
           <p className="mt-4 line-clamp-2 text-sm leading-6 text-ivory/60">
