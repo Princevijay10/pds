@@ -146,7 +146,7 @@ const AdminLayout = () => {
           })}
         </nav>
 
-        <div className="space-y-1 border-t border-obsidian-border px-3 py-4">
+        <div className="space-y-1 border-t border-obsidian-border/80 px-3 py-4">
           <a
             href="/"
             target="_blank"
