@@ -6,6 +6,8 @@ import api from "../../utils/api.js";
 const emptyForm = {
   title: "",
   icon: "Sparkles",
+  image: "",
+  galleryImages: "",
   shortDescription: "",
   fullDescription: "",
   features: "",
@@ -38,7 +40,7 @@ const ManageServices = () => {
   };
 
   const handleEdit = (s) => {
-    setForm({ ...s, features: (s.features || []).join(", ") });
+    setForm({ ...s, features: (s.features || []).join(", "), galleryImages: (s.galleryImages || []).join(", ") });
     setEditingId(s._id);
     setShowForm(true);
   };
@@ -46,7 +48,7 @@ const ManageServices = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-    const payload = { ...form, features: form.features.split(",").map((f) => f.trim()).filter(Boolean) };
+    const payload = { ...form, features: form.features.split(",").map((f) => f.trim()).filter(Boolean), galleryImages: form.galleryImages.split(",").map((image) => image.trim()).filter(Boolean) };
     try {
       if (editingId) {
         await api.put(`/services/${editingId}`, payload);
@@ -100,6 +102,9 @@ const ManageServices = () => {
               {iconOptions.map((i) => <option key={i} value={i}>{i}</option>)}
             </select>
           </div>
+
+          <input placeholder="Main image URL (optional)" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} className="w-full rounded-lg border border-obsidian-border bg-obsidian px-4 py-2.5 text-sm text-ivory" />
+          <input placeholder="Gallery image URLs (comma separated, optional)" value={form.galleryImages} onChange={(e) => setForm({ ...form, galleryImages: e.target.value })} className="w-full rounded-lg border border-obsidian-border bg-obsidian px-4 py-2.5 text-sm text-ivory" />
 
           <input required placeholder="Short description (card summary)" value={form.shortDescription} onChange={(e) => setForm({ ...form, shortDescription: e.target.value })} className="w-full rounded-lg border border-obsidian-border bg-obsidian px-4 py-2.5 text-sm text-ivory" />
           <textarea required rows={3} placeholder="Full description" value={form.fullDescription} onChange={(e) => setForm({ ...form, fullDescription: e.target.value })} className="w-full resize-none rounded-lg border border-obsidian-border bg-obsidian px-4 py-2.5 text-sm text-ivory" />
