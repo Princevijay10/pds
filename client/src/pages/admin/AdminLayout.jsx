@@ -168,7 +168,7 @@ const AdminLayout = () => {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden">
-        <header className="hidden items-center justify-between border-b border-obsidian-border bg-obsidian-light px-6 py-3 md:flex">
+        <header className="hidden items-center justify-between border-b border-obsidian-border bg-obsidian-light px-8 py-3 md:flex">
           <div className="flex items-center gap-2">
             {!pushEnabled ? (
               <button
