@@ -31,15 +31,17 @@ const Dashboard = () => {
         setLoading(true);
       }
 
-      const [statsResponse, reviewsResponse] = await Promise.all([
+      const [statsResponse, reviewsResponse, settingsResponse] = await Promise.all([
         api.get("/dashboard/stats"),
         api.get("/testimonials/admin"),
+        api.get("/site-settings/admin"),
       ]);
 
       setData(statsResponse.data);
 
-      setReviews(
-        reviewsResponse.data.testimonials || []
+      setReviews(reviewsResponse.data.testimonials || []);
+      setShowHomepageStats(
+        settingsResponse.data?.settings?.showHomepageStats !== false
       );
     } catch (error) {
       console.error("Dashboard loading error:", error);
@@ -64,6 +66,31 @@ const Dashboard = () => {
 
     return () => clearInterval(interval);
   }, [loadDashboard]);
+
+  const toggleHomepageStats = async () => {
+    const nextValue = !showHomepageStats;
+
+    try {
+      setSavingStatsSetting(true);
+      await api.put("/site-settings/admin", {
+        showHomepageStats: nextValue,
+      });
+      setShowHomepageStats(nextValue);
+      toast.success(
+        nextValue
+          ? "Homepage statistics are now visible."
+          : "Homepage statistics are now hidden."
+      );
+    } catch (error) {
+      console.error("Homepage statistics setting error:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to update homepage statistics visibility"
+      );
+    } finally {
+      setSavingStatsSetting(false);
+    }
+  };
 
   const approveReview = async (review) => {
     try {
