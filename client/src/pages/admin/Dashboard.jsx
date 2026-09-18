@@ -185,7 +185,7 @@ const Dashboard = () => {
                 </div>
 
                 <div>
-                  <p className="font-display text-2xl font-bold text-ivory">
+                  <p className="font-sans text-2xl font-bold text-ivory tabular-nums">
                     {card.value}
                   </p>
 
