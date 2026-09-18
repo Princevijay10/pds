@@ -144,7 +144,7 @@ const Dashboard = () => {
           type="button"
           onClick={() => loadDashboard(true)}
           disabled={refreshing}
-          className="flex items-center gap-2 rounded-lg border border-obsidian-border px-4 py-2 text-sm text-ivory/60 transition hover:border-gold-400/40 hover:text-gold-400 disabled:opacity-50"
+          className="admin-btn admin-btn-secondary"
         >
           <RefreshCw
             size={15}
@@ -349,7 +349,7 @@ const Dashboard = () => {
                   <button
                     type="button"
                     onClick={() => approveReview(review)}
-                    className="flex items-center gap-2 rounded-lg bg-gold-400 px-4 py-2 text-xs font-semibold text-black transition hover:bg-gold-300"
+                    className="admin-btn admin-btn-primary !text-xs"
                   >
                     <Check size={14} />
                     Approve
