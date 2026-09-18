@@ -144,7 +144,7 @@ const Dashboard = () => {
           type="button"
           onClick={() => loadDashboard(true)}
           disabled={refreshing}
-          className="admin-btn admin-btn-secondary"
+          className="admin-btn admin-btn-ghost"
         >
           <RefreshCw
             size={15}
