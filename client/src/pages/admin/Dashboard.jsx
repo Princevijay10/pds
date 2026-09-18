@@ -174,7 +174,7 @@ const Dashboard = () => {
               <Link
                 key={card.label}
                 to={card.link}
-                className={`card-surface flex items-center gap-4 p-6 transition hover:border-gold-400/40 ${
+                className={`card-surface flex items-center gap-5 p-6 transition hover:border-gold-400/40 ${
                   card.highlight
                     ? "border-gold-400/30"
                     : ""
