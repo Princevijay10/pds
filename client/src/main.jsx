@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "react-hot-toast";
 import App from "./App.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import "./index.css";
 
@@ -11,6 +12,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <HelmetProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <AuthProvider>
           <App />
           <Toaster
