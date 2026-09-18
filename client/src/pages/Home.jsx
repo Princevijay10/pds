@@ -10,11 +10,11 @@ import logo from "../assets/logo.jpg";
 import banner from "../assets/banner.jpg";
 import ReviewForm from "../components/ReviewForm.jsx";
 
-const stats = [
-  { label: "Projects Delivered", value: "50+" },
-  { label: "Happy Clients", value: "40+" },
-  { label: "Years of Craft", value: "3+" },
-  { label: "Avg. Turnaround", value: "7 Days" },
+const statLabels = [
+  { key: "projectsDelivered", label: "Projects Delivered" },
+  { key: "happyClients", label: "Happy Clients" },
+  { key: "yearsOfCraft", label: "Years of Craft" },
+  { key: "avgTurnaroundDays", label: "Avg. Turnaround" },
 ];
 
 const fallbackServices = [
@@ -84,6 +84,7 @@ const Home = () => {
   const [servicesError, setServicesError] = useState(false);
   const [projectsError, setProjectsError] = useState(false);
   const [testimonialsError, setTestimonialsError] = useState(false);
+  const [stats, setStats] = useState(null);
 
   useEffect(() => {
     api.get("/services")
@@ -100,6 +101,19 @@ const Home = () => {
       .then((res) => setTestimonials(res.data.testimonials?.slice(0, 3) || []))
       .catch(() => setTestimonialsError(true))
       .finally(() => setTestimonialsLoading(false));
+  }, []);
+
+  useEffect(() => {
+    const fetchStats = () => {
+      api.get("/portfolio/stats")
+        .then((res) => setStats(res.data.stats || null))
+        .catch(() => setStats(null));
+    };
+
+    fetchStats();
+    const interval = setInterval(fetchStats, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -143,12 +157,22 @@ const Home = () => {
             </div>
 
             <div className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-4">
-              {stats.map((s) => (
-                <div key={s.label}>
-                  <p className="font-display text-2xl font-bold text-gold-400 sm:text-3xl">{s.value}</p>
-                  <p className="mt-1 text-xs text-ivory/50">{s.label}</p>
-                </div>
-              ))}
+              {statLabels.map((s) => {
+                const value = stats?.[s.key];
+                const displayValue =
+                  value === null || value === undefined
+                    ? "—"
+                    : s.key === "avgTurnaroundDays"
+                      ? `${value} Days`
+                      : `${value}+`;
+
+                return (
+                  <div key={s.key}>
+                    <p className="font-display text-2xl font-bold text-gold-400 sm:text-3xl">{displayValue}</p>
+                    <p className="mt-1 text-xs text-ivory/50">{s.label}</p>
+                  </div>
+                );
+              })}
             </div>
           </motion.div>
 
