@@ -5,7 +5,7 @@ import {
   LayoutDashboard,
   Inbox,
   FolderKanban,
-  Sparkles,
+  BriefcaseBusiness,
   MessageSquareQuote,
   LogOut,
   ExternalLink,
@@ -24,7 +24,7 @@ const navItems = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/admin/leads", label: "Leads", icon: Inbox },
   { to: "/admin/portfolio", label: "Portfolio", icon: FolderKanban },
-  { to: "/admin/services", label: "Services", icon: Sparkles },
+  { to: "/admin/services", label: "Services", icon: BriefcaseBusiness },
   {
     to: "/admin/testimonials",
     label: "Testimonials",
