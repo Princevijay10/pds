@@ -14,6 +14,11 @@ const PortfolioCard = ({ project, index = 0 }) => (
         src={project.coverImage}
         alt={project.title}
         loading="lazy"
+        onError={(event) => {
+          event.currentTarget.onerror = null;
+          event.currentTarget.src = "/logo.jpg";
+          event.currentTarget.classList.add("object-contain", "p-10", "bg-obsidian");
+        }}
         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-obsidian/90 via-obsidian/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
