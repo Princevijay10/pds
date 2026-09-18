@@ -5,6 +5,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Home from "./pages/Home.jsx";
 import About from "./pages/About.jsx";
 import Services from "./pages/Services.jsx";
+import ServiceDetail from "./pages/ServiceDetail.jsx";
 import Portfolio from "./pages/Portfolio.jsx";
 import ProjectDetail from "./pages/ProjectDetail.jsx";
 import Contact from "./pages/Contact.jsx";
@@ -27,6 +28,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} />
+        <Route path="/services/:id" element={<ServiceDetail />} />
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/portfolio/:slug" element={<ProjectDetail />} />
         <Route path="/contact" element={<Contact />} />
