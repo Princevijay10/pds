@@ -172,7 +172,7 @@ const ManageTestimonials = () => {
             resetForm();
             setShowForm(true);
           }}
-          className="btn-gold px-5 py-2.5 text-sm"
+          className="admin-btn admin-btn-primary"
         >
           <Plus size={16} />
           Add Testimonial
@@ -188,7 +188,7 @@ const ManageTestimonials = () => {
           <button
             type="button"
             onClick={resetForm}
-            className="absolute right-5 top-5 text-ivory/40 hover:text-ivory"
+            className="admin-icon-btn absolute right-5 top-5 !border-transparent"
             aria-label="Close form"
           >
             <X size={18} />
@@ -310,7 +310,7 @@ const ManageTestimonials = () => {
           <button
             type="submit"
             disabled={saving}
-            className="btn-gold px-6 py-2.5 text-sm disabled:opacity-60"
+            className="admin-btn admin-btn-primary !px-6"
           >
             {saving
               ? "Saving..."
@@ -368,7 +368,7 @@ const ManageTestimonials = () => {
                     onClick={() =>
                       togglePublished(testimonial)
                     }
-                    className="rounded-lg border border-obsidian-border p-2 text-ivory/70 hover:border-gold-400/40 hover:text-gold-400"
+                    className="admin-icon-btn"
                     title={
                       testimonial.published
                         ? "Hide review"
@@ -388,7 +388,7 @@ const ManageTestimonials = () => {
                     onClick={() =>
                       handleEdit(testimonial)
                     }
-                    className="rounded-lg border border-obsidian-border p-2 text-ivory/70 hover:border-gold-400/40 hover:text-gold-400"
+                    className="admin-icon-btn"
                     title="Edit testimonial"
                   >
                     <Pencil size={13} />
@@ -400,7 +400,7 @@ const ManageTestimonials = () => {
                     onClick={() =>
                       deleteTestimonial(testimonial._id)
                     }
-                    className="rounded-lg border border-obsidian-border p-2 text-red-400/80 hover:border-red-400/40"
+                    className="admin-icon-btn admin-btn-danger"
                     title="Delete testimonial"
                   >
                     <Trash2 size={13} />
