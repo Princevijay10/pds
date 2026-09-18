@@ -123,7 +123,7 @@ const AdminLayout = () => {
           </div>
         </div>
 
-        <nav className="flex-1 space-y-1 px-3 py-6">
+        <nav className="flex-1 space-y-2 px-3 py-6">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
