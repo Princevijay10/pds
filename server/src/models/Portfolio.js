@@ -18,6 +18,7 @@ const portfolioSchema = new mongoose.Schema(
       ],
     },
     client: { type: String, trim: true },
+    deliveryDays: { type: Number, min: 1, max: 365 },
     description: { type: String, required: true },
     coverImage: { type: String, required: true },
     images: [{ type: String }],
