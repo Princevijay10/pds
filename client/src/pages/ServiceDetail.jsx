@@ -44,7 +44,21 @@ const ServiceDetail = () => {
     setNotFound(false);
     api.get("/services/" + id)
       .then((res) => setService(res.data.service))
-      .catch(() => setNotFound(true))
+      .catch(async () => {
+        // Backward-compatible fallback for a local server that has not
+        // restarted onto the new public service-detail endpoint yet.
+        try {
+          const res = await api.get("/services");
+          const match = (res.data.services || []).find((item) => item._id === id);
+          if (match) {
+            setService(match);
+            return;
+          }
+        } catch (fallbackError) {
+          console.error("Service fallback error:", fallbackError);
+        }
+        setNotFound(true);
+      })
       .finally(() => setLoading(false));
   }, [id]);
 
