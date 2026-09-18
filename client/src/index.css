@@ -40,6 +40,12 @@
     @apply inline-flex items-center justify-center gap-2 rounded-full bg-gold-gradient px-7 py-3.5 font-accent font-semibold text-obsidian shadow-gold transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98];
   }
   /* Shared admin button system: primary, secondary, danger, and ghost/icon. */
+  .admin-input {
+    @apply w-full rounded-xl border border-obsidian-border bg-obsidian px-4 py-3 text-sm text-ivory placeholder:text-ivory/25 transition-colors focus:border-gold-400/50 focus:outline-none focus:ring-1 focus:ring-gold-400/30;
+  }
+  .admin-input option {
+    @apply bg-obsidian text-ivory;
+  }
   .admin-btn {
     @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors duration-200 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian;
   }
