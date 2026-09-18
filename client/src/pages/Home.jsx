@@ -206,7 +206,7 @@ const Home = () => {
                   <span className="eyebrow">Digital Studio</span>
                   <h2 className="mt-3 font-display text-2xl font-bold leading-tight text-ivory">
                     Premium digital experiences.
-                  </h3>
+                  </h2>
                   <p className="mt-3 text-xs leading-relaxed text-ivory/50">
                     Clean interfaces, strong brands, and thoughtful development built for growth.
                   </p>
