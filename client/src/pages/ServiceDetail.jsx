@@ -78,11 +78,15 @@ const ServiceDetail = () => {
   const Icon = Icons[service.icon] || Icons.Sparkles;
   const images = [service.image, ...(service.galleryImages || [])].filter(Boolean);
   const displayImages = images.length > 0
-    ? images.slice(0, 2)
+    ? images
     : fallbackImages[service.title] || [
         "https://images.unsplash.com/photo-1559028012-481c04fa7050?auto=format&fit=crop&w=1600&q=85",
         "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
       ];
+
+  const galleryDisplayImages = (service.galleryImages || []).filter(Boolean).length > 0
+    ? (service.galleryImages || []).filter(Boolean)
+    : displayImages.slice(1);
 
   return (
     <>
@@ -155,15 +159,27 @@ const ServiceDetail = () => {
               </Link>
             </div>
 
-            <div className="space-y-4">
-              {displayImages.map((image, index) => (
-                <img
-                  key={image}
-                  src={image}
-                  alt={service.title + " example " + (index + 1)}
-                  className="w-full rounded-2xl border border-obsidian-border object-cover"
-                />
-              ))}
+            <div>
+              <span className="eyebrow">Our Work</span>
+              <h3 className="mt-3 font-display text-2xl font-bold text-ivory">Gallery</h3>
+              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {galleryDisplayImages.map((image, index) => (
+                  <motion.div
+                    key={image + "-" + index}
+                    initial={{ opacity: 0, y: 14 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.15 }}
+                    transition={{ duration: 0.35, delay: Math.min(index * 0.05, 0.25) }}
+                    className="overflow-hidden rounded-2xl border border-obsidian-border bg-obsidian-surface"
+                  >
+                    <img
+                      src={image}
+                      alt={service.title + " gallery example " + (index + 1)}
+                      className="aspect-[4/3] w-full object-cover transition duration-500 hover:scale-[1.02]"
+                    />
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
