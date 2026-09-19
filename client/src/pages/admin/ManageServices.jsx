@@ -144,7 +144,7 @@ const ManageServices = () => {
     }
   };
 
-  const handleSubmit = async (e) =>
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
 
@@ -268,13 +268,7 @@ const ManageServices = () => {
                   <label className="admin-btn admin-btn-secondary shrink-0 cursor-pointer justify-center">
                     {uploadingMain ? <Loader2 size={15} className="animate-spin" /> : <Upload size={15} />}
                     {uploadingMain ? "Uploading..." : "Upload Image"}
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp,image/gif"
-                      onChange={handleMainImageUpload}
-                      disabled={uploadingMain}
-                      className="sr-only"
-                    />
+                    <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleMainImageUpload} disabled={uploadingMain} className="sr-only" />
                   </label>
                 </div>
                 <p className="text-[11px] text-ivory/30">JPG, PNG, WEBP or GIF • max 5MB</p>
@@ -289,14 +283,7 @@ const ManageServices = () => {
                   <label className="admin-btn admin-btn-secondary shrink-0 cursor-pointer justify-center">
                     {uploadingGallery ? <Loader2 size={15} className="animate-spin" /> : <Upload size={15} />}
                     {uploadingGallery ? "Uploading..." : "Upload Images"}
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp,image/gif"
-                      multiple
-                      onChange={handleGalleryUpload}
-                      disabled={uploadingGallery}
-                      className="sr-only"
-                    />
+                    <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple onChange={handleGalleryUpload} disabled={uploadingGallery} className="sr-only" />
                   </label>
                 </div>
                 <p className="text-[11px] text-ivory/30">Select up to 10 images • JPG, PNG, WEBP or GIF • max 5MB each</p>
@@ -342,12 +329,7 @@ const ManageServices = () => {
                 <ImageIcon size={14} className="text-gold-400" /> Live Image Preview
               </div>
               <div className="overflow-hidden rounded-xl border border-obsidian-border bg-obsidian">
-                <img
-                  src={form.image || fallbackImages[0]}
-                  alt=""
-                  className="aspect-[4/3] w-full object-cover"
-                  onError={(event) => { event.currentTarget.src = fallbackImages[0]; }}
-                />
+                <img src={form.image || fallbackImages[0]} alt="" className="aspect-[4/3] w-full object-cover" onError={(event) => { event.currentTarget.src = fallbackImages[0]; }} />
               </div>
               <div className="mt-4 flex items-center gap-3 rounded-xl border border-obsidian-border bg-obsidian p-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-full border border-gold-400 text-gold-400">
@@ -358,9 +340,7 @@ const ManageServices = () => {
                   <p className="text-[10px] text-gold-400">PDS Service</p>
                 </div>
               </div>
-              <p className="mt-4 text-[11px] leading-5 text-ivory/35">
-                Tip: use a high-quality landscape image for the public service card and detail page.
-              </p>
+              <p className="mt-4 text-[11px] leading-5 text-ivory/35">Tip: use a high-quality landscape image for the public service card and detail page.</p>
             </div>
           </div>
 
@@ -394,12 +374,8 @@ const ManageServices = () => {
                 <div className="relative aspect-[16/9] overflow-hidden">
                   <img src={image} alt={service.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                  <div className="absolute left-4 top-4 rounded-full border border-gold-400/40 bg-black/60 px-2.5 py-1 text-[10px] font-semibold text-gold-400 backdrop-blur">
-                    #{String(index + 1).padStart(2, "0")}
-                  </div>
-                  <div className="absolute bottom-4 left-4 flex h-10 w-10 items-center justify-center rounded-full border border-gold-400 bg-black/70 text-gold-400">
-                    <Icon size={18} />
-                  </div>
+                  <div className="absolute left-4 top-4 rounded-full border border-gold-400/40 bg-black/60 px-2.5 py-1 text-[10px] font-semibold text-gold-400 backdrop-blur">#{String(index + 1).padStart(2, "0")}</div>
+                  <div className="absolute bottom-4 left-4 flex h-10 w-10 items-center justify-center rounded-full border border-gold-400 bg-black/70 text-gold-400"><Icon size={18} /></div>
                   <span className={`absolute right-4 top-4 rounded-full px-2.5 py-1 text-[10px] font-semibold ${service.active ? "bg-green-400/15 text-green-300" : "bg-red-400/15 text-red-300"}`}>
                     {service.active ? "Live" : "Hidden"}
                   </span>
@@ -415,15 +391,9 @@ const ManageServices = () => {
                       {service.active ? "Hide" : "Publish"}
                     </button>
                     <div className="flex gap-2">
-                      <button type="button" onClick={() => handleEdit(service)} className="admin-icon-btn" title="Edit service">
-                        <Pencil size={14} />
-                      </button>
-                      <a href={"/services/" + service._id} target="_blank" rel="noreferrer" className="admin-icon-btn" title="Preview service">
-                        <ExternalLink size={14} />
-                      </a>
-                      <button type="button" onClick={() => deleteService(service._id)} className="admin-icon-btn admin-btn-danger" title="Delete service">
-                        <Trash2 size={14} />
-                      </button>
+                      <button type="button" onClick={() => handleEdit(service)} className="admin-icon-btn" title="Edit service"><Pencil size={14} /></button>
+                      <a href={"/services/" + service._id} target="_blank" rel="noreferrer" className="admin-icon-btn" title="Preview service"><ExternalLink size={14} /></a>
+                      <button type="button" onClick={() => deleteService(service._id)} className="admin-icon-btn admin-btn-danger" title="Delete service"><Trash2 size={14} /></button>
                     </div>
                   </div>
                 </div>
