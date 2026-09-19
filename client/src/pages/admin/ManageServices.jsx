@@ -300,12 +300,12 @@ const ManageServices = () => {
               </div>
 
               <div className="space-y-2">
-                <span className="text-xs font-semibold text-ivory/60">Main Image</span>
+                <div className="flex items-center justify-between gap-3"><span className="text-xs font-semibold text-ivory/60">Main Image</span><span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gold-400">{editingId ? "Change / Replace" : "Upload"}</span></div>
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://... or upload an image" className="admin-input flex-1" />
                   <label className="admin-btn admin-btn-secondary shrink-0 cursor-pointer justify-center">
                     {uploadingMain ? <Loader2 size={15} className="animate-spin" /> : <Upload size={15} />}
-                    {uploadingMain ? "Uploading..." : "Upload Image"}
+                    {uploadingMain ? "Uploading..." : editingId ? "Change Main Image" : "Upload Main Image"}
                     <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleMainImageUpload} disabled={uploadingMain} className="sr-only" />
                   </label>
                 </div>
