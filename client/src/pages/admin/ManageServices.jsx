@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import * as Icons from "lucide-react";
-import { Plus, Trash2, Pencil, X, Image as ImageIcon, Eye, EyeOff, ExternalLink } from "lucide-react";
+import { Plus, Trash2, Pencil, X, Image as ImageIcon, Eye, EyeOff, ExternalLink, Upload, Loader2 } from "lucide-react";
 import api from "../../utils/api.js";
 
 const emptyForm = {
@@ -42,6 +42,8 @@ const ManageServices = () => {
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [uploadingMain, setUploadingMain] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState(false);
 
   const fetchServices = () => {
     setLoading(true);
@@ -82,7 +84,67 @@ const ManageServices = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleSubmit = async (e) => {
+  const uploadImage = async (file) => {
+    const data = new FormData();
+    data.append("image", file);
+    const res = await api.post("/upload", data);
+    return res.data.url;
+  };
+
+  const uploadGalleryImages = async (files) => {
+    const data = new FormData();
+    Array.from(files).forEach((file) => data.append("images", file));
+    const res = await api.post("/upload/multiple", data);
+    return res.data.urls || [];
+  };
+
+  const toPublicImageUrl = (url) => {
+    if (!url) return "";
+    if (/^https?:\/\//i.test(url)) return url;
+    const apiBase = import.meta.env.VITE_API_URL || "/api";
+    const serverOrigin = apiBase.replace(/\/api\/?$/, "");
+    return `${serverOrigin}${url.startsWith("/") ? url : `/${url}`}`;
+  };
+
+  const handleMainImageUpload = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    setUploadingMain(true);
+    try {
+      const url = await uploadImage(file);
+      setForm((prev) => ({ ...prev, image: toPublicImageUrl(url) }));
+      toast.success("Main image uploaded");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to upload image");
+    } finally {
+      setUploadingMain(false);
+    }
+  };
+
+  const handleGalleryUpload = async (event) => {
+    const files = event.target.files;
+    event.target.value = "";
+    if (!files?.length) return;
+
+    setUploadingGallery(true);
+    try {
+      const urls = await uploadGalleryImages(files);
+      const publicUrls = urls.map(toPublicImageUrl);
+      setForm((prev) => ({
+        ...prev,
+        galleryImages: [prev.galleryImages, ...publicUrls].filter(Boolean).join(", "),
+      }));
+      toast.success(`${publicUrls.length} gallery image${publicUrls.length === 1 ? "" : "s"} uploaded`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to upload gallery images");
+    } finally {
+      setUploadingGallery(false);
+    }
+  };
+
+  const handleSubmit = async (e) =>
     e.preventDefault();
     setSaving(true);
 
@@ -199,15 +261,46 @@ const ManageServices = () => {
                 </label>
               </div>
 
-              <label className="block space-y-2">
-                <span className="text-xs font-semibold text-ivory/60">Main Image URL</span>
-                <input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://..." className="admin-input" />
-              </label>
+              <div className="space-y-2">
+                <span className="text-xs font-semibold text-ivory/60">Main Image</span>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://... or upload an image" className="admin-input flex-1" />
+                  <label className="admin-btn admin-btn-secondary shrink-0 cursor-pointer justify-center">
+                    {uploadingMain ? <Loader2 size={15} className="animate-spin" /> : <Upload size={15} />}
+                    {uploadingMain ? "Uploading..." : "Upload Image"}
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      onChange={handleMainImageUpload}
+                      disabled={uploadingMain}
+                      className="sr-only"
+                    />
+                  </label>
+                </div>
+                <p className="text-[11px] text-ivory/30">JPG, PNG, WEBP or GIF • max 5MB</p>
+              </div>
 
-              <label className="block space-y-2">
-                <span className="text-xs font-semibold text-ivory/60">Gallery Image URLs <span className="font-normal text-ivory/30">(comma separated)</span></span>
-                <input value={form.galleryImages} onChange={(e) => setForm({ ...form, galleryImages: e.target.value })} placeholder="https://..., https://..." className="admin-input" />
-              </label>
+              <div className="space-y-2">
+                <span className="text-xs font-semibold text-ivory/60">
+                  Gallery Images <span className="font-normal text-ivory/30">(comma separated)</span>
+                </span>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <input value={form.galleryImages} onChange={(e) => setForm({ ...form, galleryImages: e.target.value })} placeholder="https://..., https://..." className="admin-input flex-1" />
+                  <label className="admin-btn admin-btn-secondary shrink-0 cursor-pointer justify-center">
+                    {uploadingGallery ? <Loader2 size={15} className="animate-spin" /> : <Upload size={15} />}
+                    {uploadingGallery ? "Uploading..." : "Upload Images"}
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      multiple
+                      onChange={handleGalleryUpload}
+                      disabled={uploadingGallery}
+                      className="sr-only"
+                    />
+                  </label>
+                </div>
+                <p className="text-[11px] text-ivory/30">Select up to 10 images • JPG, PNG, WEBP or GIF • max 5MB each</p>
+              </div>
 
               <label className="block space-y-2">
                 <span className="text-xs font-semibold text-ivory/60">Short Description</span>
