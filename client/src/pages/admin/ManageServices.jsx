@@ -351,13 +351,13 @@ const ManageServices = () => {
                 </div>
 
                 {getGalleryImages().length > 0 ? (
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-5">
                     {getGalleryImages().map((image, index) => (
                       <div key={`${image}-${index}`} className="group relative overflow-hidden rounded-xl border border-obsidian-border bg-obsidian">
                         <img
                           src={image}
                           alt={`Gallery image ${index + 1}`}
-                          className="aspect-[4/3] w-full object-cover"
+                          className="h-32 w-full object-contain bg-black object-center sm:h-36"
                           onError={(event) => { event.currentTarget.src = fallbackImages[index % fallbackImages.length]; }}
                         />
                         <button
@@ -451,7 +451,7 @@ const ManageServices = () => {
       )}
 
       {loading ? (
-        <div className="mt-7 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-7 grid auto-rows-fr gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-[330px] animate-pulse rounded-2xl border border-obsidian-border bg-obsidian-surface" />)}
         </div>
       ) : services.length === 0 ? (
@@ -468,7 +468,7 @@ const ManageServices = () => {
 
             return (
               <article key={service._id} className="group overflow-hidden rounded-2xl border border-obsidian-border bg-obsidian-surface transition-all duration-300 hover:-translate-y-1 hover:border-gold-400/40">
-                <div className="relative aspect-[16/9] overflow-hidden">
+                <div className="relative h-52 overflow-hidden sm:h-56">
                   <img src={image} alt={service.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
                   <div className="absolute left-4 top-4 rounded-full border border-gold-400/40 bg-black/60 px-2.5 py-1 text-[10px] font-semibold text-gold-400 backdrop-blur">#{String(index + 1).padStart(2, "0")}</div>
