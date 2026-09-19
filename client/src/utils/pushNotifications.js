@@ -1,3 +1,5 @@
+import api from "./api.js";
+
 const urlBase64ToUint8Array = (base64String) => {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding)
@@ -12,11 +14,13 @@ export const enablePushNotifications = async () => {
     throw new Error("Push notifications are not supported on this device/browser.");
   }
 
-  const registration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-  const keyResponse = await fetch("/api/push/public-key");
-  const keyData = await keyResponse.json();
+  const registration = await navigator.serviceWorker.register("/sw.js", {
+    scope: "/",
+  });
 
-  if (!keyResponse.ok || !keyData.publicKey) {
+  const { data: keyData } = await api.get("/push/public-key");
+
+  if (!keyData?.publicKey) {
     throw new Error("Push notifications are not configured on the server.");
   }
 
@@ -26,6 +30,7 @@ export const enablePushNotifications = async () => {
   }
 
   let subscription = await registration.pushManager.getSubscription();
+
   if (!subscription) {
     subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
@@ -33,32 +38,13 @@ export const enablePushNotifications = async () => {
     });
   }
 
-  const response = await fetch("/api/push/subscribe", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("pds_token") || ""}`,
-    },
-    body: JSON.stringify(subscription),
-  });
+  const { data } = await api.post("/push/subscribe", subscription.toJSON());
 
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.message || "Failed to enable notifications.");
-  }
   return data;
 };
 
 export const sendPushTest = async () => {
-  const response = await fetch("/api/push/test", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("pds_token") || ""}`,
-    },
-  });
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.message || "Failed to send test notification.");
-  }
+  const { data } = await api.post("/push/test");
+
   return data;
 };
