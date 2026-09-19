@@ -33,17 +33,18 @@ const fallbackImages = {
   ],
 };
 
-const ServiceGallery = ({ images, title }) => {
+const ServiceHeroCarousel = ({ images, title }) => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [dragStart, setDragStart] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
   const count = images.length;
 
   useEffect(() => {
     if (count < 2 || isPaused) return undefined;
+
     const timer = window.setInterval(() => {
       setActiveIndex((current) => (current + 1) % count);
     }, 5000);
+
     return () => window.clearInterval(timer);
   }, [count, isPaused]);
 
@@ -58,136 +59,122 @@ const ServiceGallery = ({ images, title }) => {
 
   const getOffset = (index) => {
     if (count <= 3) return index - activeIndex;
+
     let offset = index - activeIndex;
     if (offset > count / 2) offset -= count;
     if (offset < -count / 2) offset += count;
     return offset;
   };
 
-  const handlePointerDown = (event) => {
-    if (event.target.closest("button")) return;
-    setDragStart(event.clientX);
-    setIsPaused(true);
-  };
-
-  const handlePointerUp = (event) => {
-    if (dragStart === null) return;
-    const distance = event.clientX - dragStart;
-    setDragStart(null);
-    setIsPaused(false);
-    if (Math.abs(distance) < 45) return;
-    distance < 0 ? goNext() : goPrev();
-  };
-
   return (
-    <div className="lg:col-span-2">
-      <div className="flex flex-col items-center text-center">
-        <span className="eyebrow">Service Gallery</span>
-        <h3 className="mt-3 font-display text-2xl font-bold text-ivory sm:text-3xl">{title}</h3>
-        <p className="mt-2 max-w-xl text-sm text-ivory/45">
-          Swipe through our work or let the gallery auto-play every 5 seconds.
-        </p>
+    <div
+      className="relative w-full"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={() => setIsPaused(true)}
+      onTouchEnd={() => setIsPaused(false)}
+      aria-label="Service image carousel"
+    >
+      <div className="relative h-[285px] w-full overflow-hidden rounded-3xl border border-gold-400/20 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.10),transparent_62%)] px-2 sm:h-[390px] sm:px-4 lg:h-[450px]">
+        {images.map((image, index) => {
+          const offset = getOffset(index);
+          const visible = Math.abs(offset) <= 1;
+          const isCenter = offset === 0;
+
+          const positionClass = isCenter
+            ? "left-1/2 w-[68%] sm:w-[58%] lg:w-[52%]"
+            : offset < 0
+              ? "left-[11%] w-[30%] sm:left-[9%] sm:w-[27%] lg:left-[8%] lg:w-[27%]"
+              : "left-[89%] w-[30%] sm:left-[91%] sm:w-[27%] lg:left-[92%] lg:w-[27%]";
+
+          return (
+            <motion.div
+              key={image + "-" + index}
+              initial={false}
+              animate={{
+                x: "-50%",
+                y: "-50%",
+                scale: isCenter ? 1 : 0.78,
+                opacity: visible ? (isCenter ? 1 : 0.55) : 0,
+                zIndex: isCenter ? 30 : 20,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 180,
+                damping: 24,
+                mass: 0.8,
+              }}
+              className={
+                "absolute top-1/2 pointer-events-none " +
+                positionClass +
+                (isCenter ? "" : " hidden sm:block")
+              }
+            >
+              <div className="overflow-hidden rounded-2xl border border-gold-400/30 bg-black shadow-[0_24px_70px_rgba(0,0,0,0.60)]">
+                <img
+                  src={image}
+                  alt={title + " showcase image " + (index + 1)}
+                  draggable="false"
+                  className="h-[205px] w-full select-none bg-black object-contain sm:h-[300px] lg:h-[350px]"
+                />
+              </div>
+            </motion.div>
+          );
+        })}
+
+        {count > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={goPrev}
+              className="absolute left-2 top-1/2 z-40 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gold-400/80 bg-black/80 text-gold-400 shadow-xl backdrop-blur transition-all duration-300 hover:scale-105 hover:bg-gold-400 hover:text-black sm:left-4 sm:h-11 sm:w-11"
+              aria-label="Previous service image"
+            >
+              <ArrowLeft size={18} />
+            </button>
+
+            <button
+              type="button"
+              onClick={goNext}
+              className="absolute right-2 top-1/2 z-40 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gold-400/80 bg-black/80 text-gold-400 shadow-xl backdrop-blur transition-all duration-300 hover:scale-105 hover:bg-gold-400 hover:text-black sm:right-4 sm:h-11 sm:w-11"
+              aria-label="Next service image"
+            >
+              <ArrowRight size={18} />
+            </button>
+          </>
+        )}
       </div>
 
-      <div
-        className="relative mt-7 overflow-hidden rounded-3xl border border-gold-400/10 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.08),transparent_58%)] px-2 py-5 sm:px-5 sm:py-7"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => {
-          setIsPaused(false);
-          setDragStart(null);
-        }}
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={() => {
-          setDragStart(null);
-          setIsPaused(false);
-        }}
-        style={{ touchAction: "pan-y" }}
-        aria-label="Service image gallery"
-      >
-        <div className="relative mx-auto h-[250px] w-full max-w-6xl sm:h-[345px] lg:h-[410px]">
-          {images.map((image, index) => {
-            const offset = getOffset(index);
-            const visible = Math.abs(offset) <= 1;
-            const isCenter = offset === 0;
-
-            const positionClass = isCenter
-              ? "left-1/2 w-[70%] sm:w-[58%] lg:w-[48%]"
-              : offset < 0
-                ? "left-[12%] w-[30%] sm:left-[10%] sm:w-[27%] lg:w-[27%]"
-                : "left-[88%] w-[30%] sm:left-[90%] sm:w-[27%] lg:w-[27%]";
-
-            return (
-              <motion.div
-                key={image + "-" + index}
-                animate={{
-                  x: "-50%",
-                  y: "-50%",
-                  scale: isCenter ? 1 : 0.8,
-                  opacity: visible ? (isCenter ? 1 : 0.52) : 0,
-                  zIndex: isCenter ? 30 : 20,
-                }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className={
-                  "absolute top-1/2 pointer-events-none " +
-                  positionClass +
-                  (isCenter ? "" : " hidden sm:block")
-                }
-              >
-                <div className="overflow-hidden rounded-2xl border border-gold-400/30 bg-black shadow-[0_22px_65px_rgba(0,0,0,0.55)]">
-                  <img
-                    src={image}
-                    alt={title + " gallery image " + (index + 1)}
-                    draggable="false"
-                    className="h-[185px] w-full select-none bg-black object-contain sm:h-[260px] lg:h-[315px]"
-                  />
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        <button
-          type="button"
-          onClick={goPrev}
-          className="absolute left-3 top-1/2 z-40 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gold-400/70 bg-black/80 text-gold-400 shadow-lg backdrop-blur transition hover:bg-gold-400 hover:text-black sm:left-5 sm:h-11 sm:w-11"
-          aria-label="Previous gallery image"
-        >
-          <ArrowLeft size={18} />
-        </button>
-
-        <button
-          type="button"
-          onClick={goNext}
-          className="absolute right-3 top-1/2 z-40 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gold-400/70 bg-black/80 text-gold-400 shadow-lg backdrop-blur transition hover:bg-gold-400 hover:text-black sm:right-5 sm:h-11 sm:w-11"
-          aria-label="Next gallery image"
-        >
-          <ArrowRight size={18} />
-        </button>
-
-        <div className="relative z-40 mt-3 flex items-center justify-center gap-2">
+      {count > 1 && (
+        <div className="mt-4 flex gap-3 overflow-x-auto px-1 pb-1 scrollbar-hide">
           {images.map((image, index) => (
             <button
-              key={"dot-" + image + "-" + index}
+              key={"thumb-" + image + "-" + index}
               type="button"
               onClick={() => setActiveIndex(index)}
               className={
-                "h-2.5 rounded-full transition-all " +
+                "relative h-14 w-20 shrink-0 overflow-hidden rounded-lg border transition-all duration-300 sm:h-16 sm:w-24 " +
                 (index === activeIndex
-                  ? "w-7 bg-gold-400"
-                  : "w-2.5 bg-ivory/25 hover:bg-ivory/50")
+                  ? "border-gold-400 ring-1 ring-gold-400/40"
+                  : "border-obsidian-border opacity-60 hover:opacity-100")
               }
-              aria-label={"Show gallery image " + (index + 1)}
+              aria-label={"Show service image " + (index + 1)}
               aria-current={index === activeIndex ? "true" : undefined}
-            />
+            >
+              <img
+                src={image}
+                alt=""
+                className="h-full w-full object-cover"
+                draggable="false"
+              />
+            </button>
           ))}
         </div>
+      )}
 
-        <div className="relative z-40 mt-3 flex items-center justify-center gap-3 text-[10px] uppercase tracking-[0.2em] text-ivory/35">
-          <span>{isPaused ? "Paused" : "Auto • 5 sec"}</span>
-          <span>•</span>
-          <span>Swipe / Drag</span>
-        </div>
+      <div className="mt-3 flex items-center justify-center gap-2 text-[9px] uppercase tracking-[0.18em] text-ivory/35">
+        <span>{isPaused ? "Paused" : "Auto • 5 sec"}</span>
+        {count > 1 && <><span>•</span><span>Swipe / Click</span></>}
       </div>
     </div>
   );
@@ -244,10 +231,7 @@ const ServiceDetail = () => {
         "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
       ];
 
-  const gallerySource = (service.galleryImages || []).filter(Boolean);
-  const galleryDisplayImages = gallerySource.length > 0
-    ? [displayImages[0], ...gallerySource.filter((image) => image !== displayImages[0])]
-    : displayImages;
+  const carouselImages = displayImages;
 
   return (
     <>
@@ -261,7 +245,11 @@ const ServiceDetail = () => {
           </Link>
 
           <div className="mt-8 grid items-center gap-10 lg:grid-cols-[1fr_0.95fr]">
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+            <motion.div
+              initial={{ opacity: 0, x: -24 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ type: "spring", stiffness: 90, damping: 20 }}
+            >
               <span className="eyebrow"><Icon size={14} /> {service.title}</span>
               <h1 className="mt-4 font-display text-4xl font-bold leading-tight text-ivory sm:text-5xl">
                 {service.title}
@@ -278,13 +266,14 @@ const ServiceDetail = () => {
               </div>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="relative">
-              <img
-                src={displayImages[0]}
-                alt={service.title + " showcase"}
-                className="aspect-[4/3] w-full rounded-2xl border border-gold-400/20 bg-black object-contain shadow-2xl"
-              />
-              <div className="absolute -bottom-5 -left-3 hidden rounded-xl border border-gold-400/30 bg-obsidian-light px-4 py-3 shadow-xl sm:block">
+            <motion.div
+              initial={{ opacity: 0, x: 24, scale: 0.97 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              transition={{ type: "spring", stiffness: 85, damping: 20, delay: 0.08 }}
+              className="relative"
+            >
+              <ServiceHeroCarousel images={carouselImages} title={service.title} />
+              <div className="absolute -bottom-5 left-4 hidden rounded-xl border border-gold-400/30 bg-obsidian-light px-4 py-3 shadow-xl sm:block">
                 <div className="flex items-center gap-2 text-xs font-semibold text-gold-400">
                   <Sparkles size={13} /> Premium PDS Service
                 </div>
@@ -296,34 +285,38 @@ const ServiceDetail = () => {
 
       <section className="section">
         <div className="container-px mx-auto max-w-6xl">
-          <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr]">
-            <div>
-              <span className="eyebrow">About This Service</span>
-              <h2 className="mt-3 font-display text-3xl font-bold text-ivory">
-                From idea to <span className="gold-text">impact.</span>
-              </h2>
-              <p className="mt-5 whitespace-pre-line text-base leading-8 text-ivory/60">{service.fullDescription}</p>
+          <div className="mx-auto max-w-4xl text-center">
+            <span className="eyebrow">About This Service</span>
+            <h2 className="mt-3 font-display text-3xl font-bold text-ivory sm:text-4xl">
+              From idea to <span className="gold-text">impact.</span>
+            </h2>
+            <p className="mt-5 whitespace-pre-line text-base leading-8 text-ivory/60">
+              {service.fullDescription}
+            </p>
+          </div>
 
-              {service.features?.length > 0 && (
-                <div className="mt-8 grid gap-3 sm:grid-cols-2">
-                  {service.features.map((feature) => (
-                    <div key={feature} className="flex items-start gap-3 rounded-xl border border-obsidian-border bg-obsidian-surface/50 p-4">
-                      <CheckCircle2 size={17} className="mt-0.5 shrink-0 text-gold-400" />
-                      <span className="text-sm text-ivory/70">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <Link to={"/contact?service=" + encodeURIComponent(service.title)} className="btn-gold mt-8 px-6 py-3">
-                Enquiry Now <MessageCircle size={16} />
-              </Link>
+          {service.features?.length > 0 && (
+            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {service.features.map((feature, index) => (
+                <motion.div
+                  key={feature}
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.45, delay: index * 0.04 }}
+                  className="flex items-start gap-3 rounded-xl border border-obsidian-border bg-obsidian-surface/50 p-4 transition-colors duration-300 hover:border-gold-400/40"
+                >
+                  <CheckCircle2 size={17} className="mt-0.5 shrink-0 text-gold-400" />
+                  <span className="text-sm leading-6 text-ivory/70">{feature}</span>
+                </motion.div>
+              ))}
             </div>
+          )}
 
-            <ServiceGallery
-              images={galleryDisplayImages}
-              title={service.title}
-            />
+          <div className="mt-10 flex justify-center">
+            <Link to={"/contact?service=" + encodeURIComponent(service.title)} className="btn-gold px-6 py-3">
+              Enquiry Now <MessageCircle size={16} />
+            </Link>
           </div>
         </div>
       </section>
