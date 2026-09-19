@@ -255,13 +255,13 @@ const Home = () => {
               <p className="text-sm text-ivory/50">Loading services…</p>
             </div>
           ) : servicesError ? (
-            <div className="mt-14 grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="mt-14 grid auto-rows-fr gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
               {fallbackServices.map((s, i) => (
                 <ServiceCard key={s._id} service={s} index={i} />
               ))}
             </div>
           ) : services.length > 0 ? (
-            <div className="mt-14 grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="mt-14 grid auto-rows-fr gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
               {services.map((s, i) => (
                 <ServiceCard key={s._id} service={s} index={i} />
               ))}
