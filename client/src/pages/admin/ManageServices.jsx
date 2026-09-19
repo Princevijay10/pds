@@ -426,7 +426,7 @@ const ManageServices = () => {
                 <ImageIcon size={14} className="text-gold-400" /> Live Image Preview
               </div>
               <div className="overflow-hidden rounded-xl border border-obsidian-border bg-obsidian">
-                <img src={form.image || fallbackImages[0]} alt="" className="aspect-[4/3] w-full object-cover" onError={(event) => { event.currentTarget.src = fallbackImages[0]; }} />
+                <img src={form.image || fallbackImages[0]} alt="Main service preview" className="h-56 w-full object-contain bg-black object-center sm:h-64" onError={(event) => { event.currentTarget.src = fallbackImages[0]; }} />
               </div>
               <div className="mt-4 flex items-center gap-3 rounded-xl border border-obsidian-border bg-obsidian p-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-full border border-gold-400 text-gold-400">
