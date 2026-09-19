@@ -147,9 +147,11 @@ const ManageServices = () => {
   };
 
   const handleGalleryUpload = async (event) => {
-    const files = event.target.files;
+    // Copy the FileList before clearing the input. FileList can become empty
+    // when the input value is reset.
+    const files = Array.from(event.target.files || []);
     event.target.value = "";
-    if (!files?.length) return;
+    if (!files.length) return;
 
     const currentImages = getGalleryImages();
     const remainingSlots = 10 - currentImages.length;
