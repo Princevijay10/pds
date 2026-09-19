@@ -24,16 +24,19 @@ import pushRoutes from "./routes/pushRoutes.js";
 import siteSettingsRoutes from "./routes/siteSettingsRoutes.js";
 
 dotenv.config();
-// Use reliable public DNS for MongoDB Atlas SRV resolution
+
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
-// Fail fast on missing critical config, instead of discovering it later when
-// a user tries to log in (missing JWT_SECRET) or the DB connection hangs
-// (missing MONGO_URI).
+
 const REQUIRED_ENV_VARS = ["MONGO_URI", "JWT_SECRET"];
 const missingEnvVars = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
+
 if (missingEnvVars.length > 0) {
-  console.error(`Missing required environment variable(s): ${missingEnvVars.join(", ")}`);
-  console.error("Check server/.env (see server/.env.example for the full list).");
+  console.error(
+    `Missing required environment variable(s): ${missingEnvVars.join(", ")}`
+  );
+  console.error(
+    "Set them in Render Environment Variables (see server/.env.example)."
+  );
   process.exit(1);
 }
 
@@ -42,46 +45,69 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Trust the first proxy in front of this app (Nginx, Render, Railway,
-// Cloudflare, a load balancer, etc). Without this, req.ip resolves to the
-// proxy's address for every request, which silently breaks per-visitor
-// rate limiting below. Adjust the number if you have more than one proxy hop.
+// Render sits behind a proxy. Keep this at one hop so rate limiting can
+// identify the real client IP without triggering Express's trust-proxy warning.
 app.set("trust proxy", 1);
 
-// Security & performance middleware
 app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(compression());
+
+const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: (origin, callback) => {
+      // Same-origin/server-to-server requests have no Origin header.
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("CORS origin not allowed"));
+    },
     credentials: true,
   })
 );
+
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
-app.use(mongoSanitize()); // strips any $-prefixed or dot-containing keys from body/query/params
+app.use(mongoSanitize());
+
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }
 
-// Global API rate limiter
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 300,
   standardHeaders: true,
   legacyHeaders: false,
 });
-app.use("/api", apiLimiter);
 
-// Static file serving for uploaded images
+app.use("/api", apiLimiter);
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-// Health check
-app.get("/api/health", (req, res) => {
-  res.json({ success: true, message: "Prince Digital Studio API is running", time: new Date().toISOString() });
+// Keep this endpoint independent of MongoDB. Render can use it to determine
+// whether the Node process is alive without making DB availability a deploy
+// blocker.
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    status: "ok",
+    service: "Prince Digital Studio API",
+    time: new Date().toISOString(),
+  });
 });
 
-// API Routes
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Prince Digital Studio API is running",
+    time: new Date().toISOString(),
+  });
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/portfolio", portfolioRoutes);
@@ -92,17 +118,12 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/push", pushRoutes);
 app.use("/api/site-settings", siteSettingsRoutes);
 
-// Any /api/* request that didn't match a route above is a real 404 — this
-// must be registered before the SPA catch-all below, and applies in every
-// environment (previously this only ran outside production, so a typo'd API
-// route in production silently returned the React app's index.html instead
-// of a 404).
 app.use("/api", notFound);
 
-// Serve React build in production
 if (process.env.NODE_ENV === "production") {
   const clientBuildPath = path.join(__dirname, "../../client/dist");
   app.use(express.static(clientBuildPath));
+
   app.get("*", (req, res) => {
     res.sendFile(path.join(clientBuildPath, "index.html"));
   });
@@ -110,10 +131,19 @@ if (process.env.NODE_ENV === "production") {
 
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 8080;
+const PORT = Number(process.env.PORT) || 10000;
 
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Prince Digital Studio API running on port ${PORT} [${process.env.NODE_ENV || "development"}]`);
-  });
+// Render requires the public HTTP server to listen on all interfaces and on
+// the PORT it provides. Binding only to localhost can make a service appear
+// healthy locally while being unreachable through Render's proxy.
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(
+    `Prince Digital Studio API listening on 0.0.0.0:${PORT} [${process.env.NODE_ENV || "development"}]`
+  );
+});
+
+// DB connection is started after the HTTP server is listening so a transient
+// MongoDB/Atlas problem does not prevent Render from reaching /health.
+connectDB().catch((err) => {
+  console.error("Initial MongoDB connection failed:", err.message);
 });
