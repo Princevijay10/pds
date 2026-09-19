@@ -37,16 +37,11 @@ const ServiceGallery = ({ images, title }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [dragStart, setDragStart] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
-
   const count = images.length;
 
   useEffect(() => {
     if (count < 2 || isPaused) return undefined;
-
-    const timer = window.setInterval(() => {
-      setActiveIndex((current) => (current + 1) % count);
-    }, 5000);
-
+    const timer = window.setInterval(() => setActiveIndex((current) => (current + 1) % count), 5000);
     return () => window.clearInterval(timer);
   }, [count, isPaused]);
 
@@ -61,7 +56,6 @@ const ServiceGallery = ({ images, title }) => {
 
   const getOffset = (index) => {
     if (count <= 3) return index - activeIndex;
-
     let offset = index - activeIndex;
     if (offset > count / 2) offset -= count;
     if (offset < -count / 2) offset += count;
@@ -69,130 +63,83 @@ const ServiceGallery = ({ images, title }) => {
   };
 
   const handlePointerDown = (event) => {
+    if (event.target.closest("button")) return;
     setDragStart(event.clientX);
-    event.currentTarget.setPointerCapture?.(event.pointerId);
     setIsPaused(true);
   };
 
   const handlePointerUp = (event) => {
     if (dragStart === null) return;
-
     const distance = event.clientX - dragStart;
     setDragStart(null);
     setIsPaused(false);
-
     if (Math.abs(distance) < 45) return;
-    if (distance < 0) goNext();
-    else goPrev();
+    distance < 0 ? goNext() : goPrev();
   };
 
   return (
     <div className="lg:col-span-2">
       <div className="flex flex-col items-center text-center">
         <span className="eyebrow">Service Gallery</span>
-        <h3 className="mt-3 font-display text-2xl font-bold text-ivory sm:text-3xl">
-          {title}
-        </h3>
-        <p className="mt-2 max-w-xl text-sm text-ivory/45">
-          Swipe through our work or let the gallery auto-play every 5 seconds.
-        </p>
+        <h3 className="mt-3 font-display text-2xl font-bold text-ivory sm:text-3xl">{title}</h3>
+        <p className="mt-2 max-w-xl text-sm text-ivory/45">Swipe through our work or let the gallery auto-play every 5 seconds.</p>
       </div>
 
       <div
-        className="relative mt-7 overflow-hidden rounded-3xl border border-gold-400/10 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.08),transparent_55%)] px-2 py-6 sm:px-6 sm:py-8"
+        className="relative mt-7 overflow-hidden rounded-3xl border border-gold-400/10 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.08),transparent_58%)] px-2 py-6 sm:px-5 sm:py-7"
         onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => {
-          setIsPaused(false);
-          setDragStart(null);
-        }}
+        onMouseLeave={() => { setIsPaused(false); setDragStart(null); }}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
-        onPointerCancel={() => {
-          setDragStart(null);
-          setIsPaused(false);
-        }}
+        onPointerCancel={() => { setDragStart(null); setIsPaused(false); }}
         style={{ touchAction: "pan-y" }}
         aria-label="Service image gallery"
       >
-        <div className="relative mx-auto h-[310px] w-full max-w-6xl sm:h-[390px] lg:h-[470px]">
+        <div className="relative mx-auto h-[275px] w-full max-w-6xl sm:h-[360px] lg:h-[425px]">
           {images.map((image, index) => {
             const offset = getOffset(index);
             const visible = Math.abs(offset) <= 1;
+            const pos = offset === 0
+              ? "left-1/2 w-[66%] sm:w-[54%] lg:w-[46%]"
+              : offset < 0
+                ? "left-[8%] w-[30%] sm:left-[8%] sm:w-[24%] lg:left-[10%] lg:w-[23%]"
+                : "left-[92%] w-[30%] sm:left-[92%] sm:w-[24%] lg:left-[90%] lg:w-[23%]";
 
             return (
               <motion.div
                 key={image + "-" + index}
                 animate={{
-                  x: offset === 0
-                    ? "0%"
-                    : offset > 0
-                      ? "42%"
-                      : "-42%",
-                  scale: offset === 0 ? 1 : 0.78,
-                  opacity: visible ? (offset === 0 ? 1 : 0.55) : 0,
+                  x: "-50%",
+                  y: "-50%",
+                  scale: offset === 0 ? 1 : 0.88,
+                  opacity: visible ? (offset === 0 ? 1 : 0.48) : 0,
                   zIndex: offset === 0 ? 30 : 20,
-                  rotateY: offset === 0 ? 0 : offset > 0 ? -8 : 8,
                 }}
-                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                className="pointer-events-none absolute left-1/2 top-1/2 w-[82%] max-w-[680px] -translate-x-1/2 -translate-y-1/2 sm:w-[68%] lg:w-[55%]"
-                style={{ perspective: "1200px" }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className={"pointer-events-none absolute top-1/2 " + pos}
               >
-                <div className="overflow-hidden rounded-2xl border border-gold-400/30 bg-black shadow-[0_25px_80px_rgba(0,0,0,0.55)]">
-                  <img
-                    src={image}
-                    alt={title + " gallery image " + (index + 1)}
-                    draggable="false"
-                    className="aspect-[4/3] w-full select-none object-cover"
-                  />
+                <div className="overflow-hidden rounded-2xl border border-gold-400/30 bg-black shadow-[0_22px_65px_rgba(0,0,0,0.55)]">
+                  <img src={image} alt={title + " gallery image " + (index + 1)} draggable="false" className="h-[200px] w-full select-none object-contain bg-black sm:h-[270px] lg:h-[325px]" />
                 </div>
               </motion.div>
             );
           })}
         </div>
 
-        <button
-          type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            goPrev();
-          }}
-          className="absolute left-3 top-1/2 z-40 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-gold-400/70 bg-black/75 text-gold-400 shadow-lg backdrop-blur transition hover:bg-gold-400 hover:text-black sm:left-6 sm:h-12 sm:w-12"
-          aria-label="Previous gallery image"
-        >
-          <ArrowLeft size={19} />
-        </button>
+        <button type="button" onClick={goPrev} className="absolute left-3 top-1/2 z-40 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gold-400/70 bg-black/80 text-gold-400 shadow-lg backdrop-blur transition hover:bg-gold-400 hover:text-black sm:left-5 sm:h-11 sm:w-11" aria-label="Previous gallery image"><ArrowLeft size={18} /></button>
+        <button type="button" onClick={goNext} className="absolute right-3 top-1/2 z-40 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gold-400/70 bg-black/80 text-gold-400 shadow-lg backdrop-blur transition hover:bg-gold-400 hover:text-black sm:right-5 sm:h-11 sm:w-11" aria-label="Next gallery image"><ArrowRight size={18} /></button>
 
-        <button
-          type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            goNext();
-          }}
-          className="absolute right-3 top-1/2 z-40 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-gold-400/70 bg-black/75 text-gold-400 shadow-lg backdrop-blur transition hover:bg-gold-400 hover:text-black sm:right-6 sm:h-12 sm:w-12"
-          aria-label="Next gallery image"
-        >
-          <ArrowRight size={19} />
-        </button>
-
-        <div className="relative z-40 mt-2 flex items-center justify-center gap-2">
+        <div className="relative z-40 mt-3 flex items-center justify-center gap-2">
           {images.map((image, index) => (
-            <button
-              key={"dot-" + image + "-" + index}
-              type="button"
-              onClick={() => setActiveIndex(index)}
-              className={`h-2.5 rounded-full transition-all ${
-                index === activeIndex ? "w-7 bg-gold-400" : "w-2.5 bg-ivory/25 hover:bg-ivory/50"
-              }`}
-              aria-label={`Show gallery image ${index + 1}`}
+            <button key={"dot-" + image + "-" + index} type="button" onClick={() => setActiveIndex(index)}
+              className={"h-2.5 rounded-full transition-all " + (index === activeIndex ? "w-7 bg-gold-400" : "w-2.5 bg-ivory/25 hover:bg-ivory/50")}
+              aria-label={"Show gallery image " + (index + 1)}
               aria-current={index === activeIndex ? "true" : undefined}
             />
           ))}
         </div>
-
-        <div className="relative z-40 mt-4 flex items-center justify-center gap-3 text-[10px] uppercase tracking-[0.2em] text-ivory/35">
-          <span>{isPaused ? "Paused" : "Auto • 5 sec"}</span>
-          <span>•</span>
-          <span>Swipe / Drag</span>
+        <div className="relative z-40 mt-3 flex items-center justify-center gap-3 text-[10px] uppercase tracking-[0.2em] text-ivory/35">
+          <span>{isPaused ? "Paused" : "Auto • 5 sec"}</span><span>•</span><span>Swipe / Drag</span>
         </div>
       </div>
     </div>
@@ -250,9 +197,10 @@ const ServiceDetail = () => {
         "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
       ];
 
-  const galleryDisplayImages = (service.galleryImages || []).filter(Boolean).length > 0
-    ? (service.galleryImages || []).filter(Boolean)
-    : displayImages.slice(1);
+  const gallerySource = (service.galleryImages || []).filter(Boolean);
+  const galleryDisplayImages = gallerySource.length > 0
+    ? [displayImages[0], ...gallerySource.filter((image) => image !== displayImages[0])]
+    : displayImages;
 
   return (
     <>
