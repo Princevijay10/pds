@@ -36,6 +36,7 @@ const fallbackImages = {
 const ServiceHeroCarousel = ({ images, title }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [dragStart, setDragStart] = useState(null);
   const count = images.length;
 
   useEffect(() => {
@@ -66,13 +67,39 @@ const ServiceHeroCarousel = ({ images, title }) => {
     return offset;
   };
 
+  const handlePointerDown = (event) => {
+    if (event.target.closest("button")) return;
+    setDragStart(event.clientX);
+    setIsPaused(true);
+  };
+
+  const handlePointerUp = (event) => {
+    if (dragStart === null) return;
+
+    const distance = event.clientX - dragStart;
+    setDragStart(null);
+    setIsPaused(false);
+
+    if (Math.abs(distance) < 45) return;
+    if (distance < 0) goNext();
+    else goPrev();
+  };
+
   return (
     <div
       className="relative w-full"
       onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      onTouchStart={() => setIsPaused(true)}
-      onTouchEnd={() => setIsPaused(false)}
+      onMouseLeave={() => {
+        setIsPaused(false);
+        setDragStart(null);
+      }}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={() => {
+        setDragStart(null);
+        setIsPaused(false);
+      }}
+      style={{ touchAction: "pan-y" }}
       aria-label="Service image carousel"
     >
       <div className="relative h-[285px] w-full overflow-hidden rounded-3xl border border-gold-400/20 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.10),transparent_62%)] px-2 sm:h-[390px] sm:px-4 lg:h-[450px]">
@@ -97,6 +124,7 @@ const ServiceHeroCarousel = ({ images, title }) => {
                 scale: isCenter ? 1 : 0.78,
                 opacity: visible ? (isCenter ? 1 : 0.55) : 0,
                 zIndex: isCenter ? 30 : 20,
+                rotateY: isCenter ? 0 : offset < 0 ? 8 : -8,
               }}
               transition={{
                 type: "spring",
@@ -104,6 +132,7 @@ const ServiceHeroCarousel = ({ images, title }) => {
                 damping: 24,
                 mass: 0.8,
               }}
+              style={{ perspective: "1200px" }}
               className={
                 "absolute top-1/2 pointer-events-none " +
                 positionClass +
@@ -174,7 +203,7 @@ const ServiceHeroCarousel = ({ images, title }) => {
 
       <div className="mt-3 flex items-center justify-center gap-2 text-[9px] uppercase tracking-[0.18em] text-ivory/35">
         <span>{isPaused ? "Paused" : "Auto • 5 sec"}</span>
-        {count > 1 && <><span>•</span><span>Swipe / Click</span></>}
+        {count > 1 && <><span>•</span><span>Swipe / Drag</span></>}
       </div>
     </div>
   );
