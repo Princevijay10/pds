@@ -41,7 +41,7 @@ const ServiceCard = ({ service, index = 0 }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5, delay: index * 0.06 }}
-      className="group flex h-full min-h-[470px] flex-col overflow-hidden rounded-2xl border border-obsidian-border bg-obsidian-surface shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-gold-400/50 hover:shadow-gold sm:min-h-[500px]"
+      className="group flex h-full min-h-[455px] flex-col overflow-hidden rounded-2xl border border-obsidian-border bg-obsidian-surface shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-gold-400/50 hover:shadow-gold sm:min-h-[475px]"
     >
       <div className="relative h-44 shrink-0 overflow-hidden bg-obsidian sm:h-48">
         <img
@@ -80,7 +80,7 @@ const ServiceCard = ({ service, index = 0 }) => {
           </ul>
         )}
 
-        <div className="mt-auto grid grid-cols-1 gap-2 pt-6 xl:grid-cols-2">
+        <div className="mt-auto grid gap-2 pt-6">
           <Link
             to={"/services/" + service._id}
             className="btn-gold w-full px-3 py-2.5 text-xs sm:text-sm"
