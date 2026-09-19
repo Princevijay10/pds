@@ -102,17 +102,17 @@ const ServiceHeroCarousel = ({ images, title }) => {
       style={{ touchAction: "pan-y" }}
       aria-label="Service image carousel"
     >
-      <div className="relative h-[285px] w-full overflow-hidden rounded-3xl border border-gold-400/20 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.10),transparent_62%)] px-2 sm:h-[390px] sm:px-4 lg:h-[450px]">
+      <div className="relative h-[320px] w-full overflow-hidden rounded-3xl border border-gold-400/20 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.10),transparent_62%)] px-1 sm:h-[430px] sm:px-2 lg:h-[500px]">
         {images.map((image, index) => {
           const offset = getOffset(index);
           const visible = Math.abs(offset) <= 1;
           const isCenter = offset === 0;
 
           const positionClass = isCenter
-            ? "left-1/2 w-[68%] sm:w-[58%] lg:w-[52%]"
+            ? "left-1/2 w-[76%] sm:w-[72%] lg:w-[68%]"
             : offset < 0
-              ? "left-[11%] w-[30%] sm:left-[9%] sm:w-[27%] lg:left-[8%] lg:w-[27%]"
-              : "left-[89%] w-[30%] sm:left-[91%] sm:w-[27%] lg:left-[92%] lg:w-[27%]";
+              ? "left-[8%] w-[34%] sm:left-[7%] sm:w-[30%] lg:left-[6%] lg:w-[30%]"
+              : "left-[92%] w-[34%] sm:left-[93%] sm:w-[30%] lg:left-[94%] lg:w-[30%]";
 
           return (
             <motion.div
@@ -144,7 +144,7 @@ const ServiceHeroCarousel = ({ images, title }) => {
                   src={image}
                   alt={title + " showcase image " + (index + 1)}
                   draggable="false"
-                  className="h-[205px] w-full select-none bg-black object-contain sm:h-[300px] lg:h-[350px]"
+                  className="h-full w-full select-none bg-black object-contain"
                 />
               </div>
             </motion.div>
@@ -193,7 +193,7 @@ const ServiceHeroCarousel = ({ images, title }) => {
               <img
                 src={image}
                 alt=""
-                className="h-full w-full object-cover"
+                className="h-full w-full bg-black object-contain"
                 draggable="false"
               />
             </button>
