@@ -6,6 +6,19 @@ export const notFound = (req, res, next) => {
 export const errorHandler = (err, req, res, next) => {
   console.error(err.stack);
 
+  if (err.name === "MulterError") {
+    const message = err.code === "LIMIT_FILE_SIZE"
+      ? "Each image must be 5MB or smaller."
+      : err.code === "LIMIT_FILE_COUNT"
+        ? "You can upload up to 10 images at a time."
+        : err.message || "Image upload failed.";
+
+    return res.status(400).json({
+      success: false,
+      message,
+    });
+  }
+
   let statusCode = err.statusCode && err.statusCode !== 200 ? err.statusCode : 500;
   let message = err.message || "Server Error";
 
