@@ -1,31 +1,36 @@
 import { v2 as cloudinary } from "cloudinary";
 
-const isConfigured = () =>
+const isCloudinaryConfigured = () =>
   Boolean(
     process.env.CLOUDINARY_CLOUD_NAME &&
       process.env.CLOUDINARY_API_KEY &&
       process.env.CLOUDINARY_API_SECRET
   );
 
-if (isConfigured()) {
+const ensureCloudinaryConfig = () => {
+  if (!isCloudinaryConfigured()) {
+    throw new Error(
+      "Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET."
+    );
+  }
+
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
     secure: true,
   });
-}
+};
 
-export const isCloudinaryConfigured = isConfigured;
+export { isCloudinaryConfigured };
 
 export const uploadBufferToCloudinary = (buffer, originalName) =>
   new Promise((resolve, reject) => {
-    if (!isConfigured()) {
-      return reject(
-        new Error(
-          "Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET."
-        )
-      );
+    try {
+      ensureCloudinaryConfig();
+    } catch (error) {
+      reject(error);
+      return;
     }
 
     const baseName = originalName
