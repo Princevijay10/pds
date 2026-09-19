@@ -41,9 +41,9 @@ const ServiceCard = ({ service, index = 0 }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5, delay: index * 0.06 }}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-obsidian-border bg-obsidian-surface shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-gold-400/50 hover:shadow-gold"
+      className="group flex h-full min-h-[470px] flex-col overflow-hidden rounded-2xl border border-obsidian-border bg-obsidian-surface shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-gold-400/50 hover:shadow-gold sm:min-h-[500px]"
     >
-      <div className="relative aspect-[16/10] overflow-hidden bg-obsidian">
+      <div className="relative h-44 shrink-0 overflow-hidden bg-obsidian sm:h-48">
         <img
           src={image}
           alt={service.title + " service"}
@@ -56,21 +56,21 @@ const ServiceCard = ({ service, index = 0 }) => {
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col p-5 sm:p-6">
+      <div className="flex flex-1 flex-col p-5 sm:p-5 lg:p-4 xl:p-5">
         <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-gold-400">
           PDS Service
         </span>
 
-        <h3 className="mt-2 min-h-[3.4rem] font-display text-xl font-bold leading-tight text-ivory">
+        <h3 className="mt-2 min-h-[3.4rem] font-display text-lg font-bold leading-tight text-ivory sm:text-xl">
           {service.title}
         </h3>
 
-        <p className="mt-3 line-clamp-2 min-h-[3rem] text-sm leading-6 text-ivory/60">
+        <p className="mt-3 line-clamp-3 min-h-[4.5rem] text-sm leading-6 text-ivory/60">
           {service.shortDescription}
         </p>
 
         {service.features?.length > 0 && (
-          <ul className="mt-4 space-y-1.5">
+          <ul className="mt-4 min-h-[4.5rem] space-y-1.5">
             {service.features.slice(0, 3).map((feature) => (
               <li key={feature} className="flex items-start gap-2 text-xs text-ivory/55">
                 <CheckCircle2 size={13} className="mt-0.5 shrink-0 text-gold-400" aria-hidden="true" />
@@ -80,17 +80,17 @@ const ServiceCard = ({ service, index = 0 }) => {
           </ul>
         )}
 
-        <div className="mt-auto flex flex-wrap gap-2.5 pt-6">
+        <div className="mt-auto grid grid-cols-1 gap-2 pt-6 xl:grid-cols-2">
           <Link
             to={"/services/" + service._id}
-            className="btn-gold px-4 py-2.5 text-xs sm:text-sm"
+            className="btn-gold w-full px-3 py-2.5 text-xs sm:text-sm"
             aria-label={"Read more about " + service.title}
           >
             Read More <ArrowRight size={15} />
           </Link>
           <Link
             to={"/contact?service=" + encodeURIComponent(service.title)}
-            className="btn-ghost px-4 py-2.5 text-xs sm:text-sm"
+            className="btn-ghost w-full px-3 py-2.5 text-xs sm:text-sm"
             aria-label={"Enquiry now for " + service.title}
           >
             Enquiry Now
