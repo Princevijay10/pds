@@ -92,10 +92,24 @@ const ManageServices = () => {
   };
 
   const uploadGalleryImages = async (files) => {
-    const data = new FormData();
-    Array.from(files).forEach((file) => data.append("images", file));
-    const res = await api.post("/upload/multiple", data);
-    return res.data.urls || [];
+    // Upload each selected gallery image through the proven single-image endpoint.
+    // This makes gallery uploads resilient: one bad file does not block the others.
+    const results = await Promise.allSettled(
+      Array.from(files).map((file) => uploadImage(file))
+    );
+
+    const urls = results
+      .filter((result) => result.status === "fulfilled" && result.value)
+      .map((result) => result.value);
+
+    const failed = results.filter((result) => result.status === "rejected");
+
+    if (urls.length === 0) {
+      const firstError = failed[0]?.reason;
+      throw firstError || new Error("No gallery images could be uploaded");
+    }
+
+    return urls;
   };
 
   const toPublicImageUrl = (url) => {
