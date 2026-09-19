@@ -123,10 +123,32 @@ const ManageServices = () => {
     }
   };
 
+  const getGalleryImages = () =>
+    form.galleryImages.split(",").map((item) => item.trim()).filter(Boolean);
+
+  const removeGalleryImage = (index) => {
+    const images = getGalleryImages();
+    images.splice(index, 1);
+    setForm((prev) => ({ ...prev, galleryImages: images.join(", ") }));
+  };
+
   const handleGalleryUpload = async (event) => {
     const files = event.target.files;
     event.target.value = "";
     if (!files?.length) return;
+
+    const currentImages = getGalleryImages();
+    const remainingSlots = 10 - currentImages.length;
+
+    if (remainingSlots <= 0) {
+      toast.error("Gallery already has 10 images. Remove one before uploading another.");
+      return;
+    }
+
+    if (files.length > remainingSlots) {
+      toast.error(`You can upload only ${remainingSlots} more image${remainingSlots === 1 ? "" : "s"} (maximum 10 total).`);
+      return;
+    }
 
     setUploadingGallery(true);
     try {
@@ -134,7 +156,7 @@ const ManageServices = () => {
       const publicUrls = urls.map(toPublicImageUrl);
       setForm((prev) => ({
         ...prev,
-        galleryImages: [prev.galleryImages, ...publicUrls].filter(Boolean).join(", "),
+        galleryImages: [...getGalleryImages(), ...publicUrls].join(", "),
       }));
       toast.success(`${publicUrls.length} gallery image${publicUrls.length === 1 ? "" : "s"} uploaded`);
     } catch (err) {
@@ -274,19 +296,78 @@ const ManageServices = () => {
                 <p className="text-[11px] text-ivory/30">JPG, PNG, WEBP or GIF • max 5MB</p>
               </div>
 
-              <div className="space-y-2">
-                <span className="text-xs font-semibold text-ivory/60">
-                  Gallery Images <span className="font-normal text-ivory/30">(comma separated)</span>
-                </span>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-xs font-semibold text-ivory/60">
+                    Gallery Images
+                  </span>
+                  <span className="text-[10px] font-semibold text-gold-400">
+                    {getGalleryImages().length}/10
+                  </span>
+                </div>
+
                 <div className="flex flex-col gap-3 sm:flex-row">
-                  <input value={form.galleryImages} onChange={(e) => setForm({ ...form, galleryImages: e.target.value })} placeholder="https://..., https://..." className="admin-input flex-1" />
+                  <input
+                    value={form.galleryImages}
+                    onChange={(e) => {
+                      const images = e.target.value
+                        .split(",")
+                        .map((item) => item.trim())
+                        .filter(Boolean)
+                        .slice(0, 10);
+                      setForm({ ...form, galleryImages: images.join(", ") });
+                    }}
+                    placeholder="Paste image URLs (comma separated)"
+                    className="admin-input flex-1"
+                  />
                   <label className="admin-btn admin-btn-secondary shrink-0 cursor-pointer justify-center">
                     {uploadingGallery ? <Loader2 size={15} className="animate-spin" /> : <Upload size={15} />}
                     {uploadingGallery ? "Uploading..." : "Upload Images"}
-                    <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple onChange={handleGalleryUpload} disabled={uploadingGallery} className="sr-only" />
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      multiple
+                      onChange={handleGalleryUpload}
+                      disabled={uploadingGallery || getGalleryImages().length >= 10}
+                      className="sr-only"
+                    />
                   </label>
                 </div>
-                <p className="text-[11px] text-ivory/30">Select up to 10 images • JPG, PNG, WEBP or GIF • max 5MB each</p>
+
+                {getGalleryImages().length > 0 ? (
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {getGalleryImages().map((image, index) => (
+                      <div key={`${image}-${index}`} className="group relative overflow-hidden rounded-xl border border-obsidian-border bg-obsidian">
+                        <img
+                          src={image}
+                          alt={`Gallery image ${index + 1}`}
+                          className="aspect-[4/3] w-full object-cover"
+                          onError={(event) => { event.currentTarget.src = fallbackImages[index % fallbackImages.length]; }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeGalleryImage(index)}
+                          className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border border-white/20 bg-black/75 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-500/80"
+                          title={`Remove gallery image ${index + 1}`}
+                          aria-label={`Remove gallery image ${index + 1}`}
+                        >
+                          <X size={13} />
+                        </button>
+                        <div className="absolute bottom-0 left-0 right-0 bg-black/70 px-2 py-1 text-[9px] text-white/70">
+                          Image {index + 1}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-dashed border-obsidian-border bg-black/10 p-6 text-center">
+                    <ImageIcon size={22} className="mx-auto text-ivory/20" />
+                    <p className="mt-2 text-xs text-ivory/40">No gallery images added yet</p>
+                    <p className="mt-1 text-[10px] text-ivory/25">Select multiple files with Ctrl/Shift or drag them into the file picker</p>
+                  </div>
+                )}
+
+                <p className="text-[11px] text-ivory/30">Up to 10 images • JPG, PNG, WEBP or GIF • max 5MB each. You can also paste image URLs.</p>
               </div>
 
               <label className="block space-y-2">
