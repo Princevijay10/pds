@@ -9,14 +9,19 @@ const ProjectDetail = () => {
   const { slug } = useParams();
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     setLoading(true);
+    setProject(null);
+    setError(false);
+
     api
-      .get(`/portfolio/${slug}`)
+      .get(`/portfolio/${encodeURIComponent(slug)}`)
       .then((res) => setProject(res.data.project))
-      .catch(() => setNotFound(true))
+      .catch((err) => {
+        setError(err.response?.status !== 404);
+      })
       .finally(() => setLoading(false));
   }, [slug]);
 
@@ -24,7 +29,18 @@ const ProjectDetail = () => {
     return <div className="section text-center text-ivory/50">Loading project…</div>;
   }
 
-  if (notFound || !project) {
+  if (error) {
+    return (
+      <div className="section text-center">
+        <p className="text-red-300" role="alert">Unable to load this project right now. Please try again.</p>
+        <Link to="/portfolio" className="btn-ghost mt-6 inline-flex">
+          <ArrowLeft size={16} /> Back to Portfolio
+        </Link>
+      </div>
+    );
+  }
+
+  if (!project) {
     return (
       <div className="section text-center">
         <p className="text-ivory/60">Project not found.</p>
@@ -66,7 +82,7 @@ const ProjectDetail = () => {
               {project.images?.length > 0 && (
                 <div className="mt-8 grid gap-4 sm:grid-cols-2">
                   {project.images.map((img, i) => (
-                    <img key={i} src={img} alt={`${project.title} screenshot ${i + 1}`} className="rounded-xl border border-obsidian-border" />
+                    <img key={i} src={img} alt={`${project.title} screenshot ${i + 1}`} className="rounded-xl border border-obsidian-border" loading="lazy" />
                   ))}
                 </div>
               )}
@@ -74,26 +90,20 @@ const ProjectDetail = () => {
             <div className="card-surface h-fit p-6">
               {project.tags?.length > 0 && (
                 <>
-                  <h3 className="font-accent text-xs font-semibold uppercase tracking-wider text-gold-400">
-                    Tags
-                  </h3>
+                  <h3 className="font-accent text-xs font-semibold uppercase tracking-wider text-gold-400">Tags</h3>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {project.tags.map((t) => (
-                      <span key={t} className="rounded-full border border-obsidian-border px-3 py-1 text-xs text-ivory/60">
-                        {t}
-                      </span>
+                      <span key={t} className="rounded-full border border-obsidian-border px-3 py-1 text-xs text-ivory/60">{t}</span>
                     ))}
                   </div>
                 </>
               )}
               {project.liveUrl && (
-                <a href={project.liveUrl} target="_blank" rel="noreferrer" className="btn-gold mt-6 w-full text-sm">
+                <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="btn-gold mt-6 w-full text-sm">
                   Visit Live Site <ExternalLink size={15} />
                 </a>
               )}
-              <Link to="/contact" className="btn-ghost mt-3 w-full text-sm">
-                Start a Similar Project
-              </Link>
+              <Link to="/contact" className="btn-ghost mt-3 w-full text-sm">Start a Similar Project</Link>
             </div>
           </div>
         </div>

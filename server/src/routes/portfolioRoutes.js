@@ -17,14 +17,13 @@ const PORTFOLIO_CATEGORIES = [
 ];
 
 const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
+const optionalUrl = (value) => value === undefined || value === null || value === "" || /^https?:\/\/[^\s]+$/i.test(value);
 
 router.get("/", async (req, res, next) => {
   try {
     const { category, featured } = req.query;
     const filter = { published: true };
-    if (typeof category === "string" && PORTFOLIO_CATEGORIES.includes(category)) {
-      filter.category = category;
-    }
+    if (typeof category === "string" && PORTFOLIO_CATEGORIES.includes(category)) filter.category = category;
     if (featured === "true") filter.featured = true;
     const projects = await Portfolio.find(filter).sort({ order: 1, createdAt: -1 });
     res.json({ success: true, count: projects.length, projects });
@@ -67,9 +66,7 @@ router.get("/stats", async (req, res, next) => {
       }
     }
 
-    const averageTurnaround = turnaround[0]?.average
-      ? Math.round(turnaround[0].average)
-      : null;
+    const averageTurnaround = turnaround[0]?.average ? Math.round(turnaround[0].average) : null;
 
     res.json({
       success: true,
@@ -105,13 +102,12 @@ router.post(
     body("category").notEmpty().isIn(PORTFOLIO_CATEGORIES),
     body("description").notEmpty(),
     body("coverImage").notEmpty(),
+    body("liveUrl").optional({ values: "falsy" }).custom(optionalUrl).withMessage("Live URL must be a valid http(s) URL"),
   ],
   async (req, res, next) => {
     try {
       const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ success: false, message: errors.array()[0].msg });
-      }
+      if (!errors.isEmpty()) return res.status(400).json({ success: false, message: errors.array()[0].msg });
       const project = await Portfolio.create(req.body);
       res.status(201).json({ success: true, project });
     } catch (err) {
@@ -129,20 +125,14 @@ router.put(
     body("category").notEmpty().isIn(PORTFOLIO_CATEGORIES),
     body("description").notEmpty(),
     body("coverImage").notEmpty(),
+    body("liveUrl").optional({ values: "falsy" }).custom(optionalUrl).withMessage("Live URL must be a valid http(s) URL"),
   ],
   async (req, res, next) => {
     try {
-      if (!isValidId(req.params.id)) {
-        return res.status(400).json({ success: false, message: "Invalid portfolio ID" });
-      }
+      if (!isValidId(req.params.id)) return res.status(400).json({ success: false, message: "Invalid portfolio ID" });
       const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ success: false, message: errors.array()[0].msg });
-      }
-      const project = await Portfolio.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true,
-      });
+      if (!errors.isEmpty()) return res.status(400).json({ success: false, message: errors.array()[0].msg });
+      const project = await Portfolio.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
       if (!project) return res.status(404).json({ success: false, message: "Project not found" });
       res.json({ success: true, project });
     } catch (err) {
@@ -153,9 +143,7 @@ router.put(
 
 router.delete("/:id", protect, adminOnly, async (req, res, next) => {
   try {
-    if (!isValidId(req.params.id)) {
-      return res.status(400).json({ success: false, message: "Invalid portfolio ID" });
-    }
+    if (!isValidId(req.params.id)) return res.status(400).json({ success: false, message: "Invalid portfolio ID" });
     const project = await Portfolio.findByIdAndDelete(req.params.id);
     if (!project) return res.status(404).json({ success: false, message: "Project not found" });
     await deleteUploadedFiles([project.coverImage, ...(project.images || [])]);

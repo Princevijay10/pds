@@ -18,13 +18,19 @@ const Portfolio = () => {
   const [projects, setProjects] = useState([]);
   const [active, setActive] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     setLoading(true);
+    setError(false);
     const query = active === "All" ? "" : `?category=${encodeURIComponent(active)}`;
     api
       .get(`/portfolio${query}`)
-      .then((res) => setProjects(res.data.projects))
+      .then((res) => setProjects(res.data.projects || []))
+      .catch(() => {
+        setProjects([]);
+        setError(true);
+      })
       .finally(() => setLoading(false));
   }, [active]);
 
@@ -71,7 +77,18 @@ const Portfolio = () => {
             </div>
           )}
 
-          {!loading && projects.length === 0 && (
+          {!loading && error && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="py-20 text-center text-red-300"
+              role="alert"
+            >
+              Unable to load the portfolio right now. Please refresh and try again.
+            </motion.p>
+          )}
+
+          {!loading && !error && projects.length === 0 && (
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -81,7 +98,7 @@ const Portfolio = () => {
             </motion.p>
           )}
 
-          {!loading && projects.length > 0 && (
+          {!loading && !error && projects.length > 0 && (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {projects.map((p, i) => (
                 <Link key={p._id} to={`/portfolio/${p.slug}`}>
