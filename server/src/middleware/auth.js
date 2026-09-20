@@ -3,7 +3,7 @@ import User from "../models/User.js";
 
 const getCookieToken = (req) => {
   const header = req.headers.cookie || "";
-  const match = header.match(/(?:^|;\\s*)pds_token=([^;]+)/);
+  const match = header.match(/(?:^|;\s*)pds_token=([^;]+)/);
   return match ? decodeURIComponent(match[1]) : null;
 };
 
