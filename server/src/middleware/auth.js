@@ -1,9 +1,15 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
+const getCookieToken = (req) => {
+  const header = req.headers.cookie || "";
+  const match = header.match(/(?:^|;\\s*)pds_token=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
+};
+
 export const protect = async (req, res, next) => {
   try {
-    const token = req.cookies?.pds_token;
+    const token = getCookieToken(req);
 
     if (!token) {
       return res.status(401).json({ success: false, message: "Not authorized" });
