@@ -16,6 +16,10 @@ const getStoredUser = () => {
 };
 
 export const AuthProvider = ({ children }) => {
+  useEffect(() => {
+    // Remove legacy bearer tokens created by older versions of the app.
+    localStorage.removeItem("pds_token");
+  }, []);
   const [user, setUser] = useState(getStoredUser);
   const [loading, setLoading] = useState(true);
 
@@ -24,7 +28,8 @@ export const AuthProvider = ({ children }) => {
       .get("/auth/me")
       .then((res) => {
         setUser(res.data.user);
-        localStorage.setItem("pds_user", JSON.stringify(res.data.user));
+        localStorage.removeItem("pds_token");
+    localStorage.setItem("pds_user", JSON.stringify(res.data.user));
       })
       .catch(() => {
         localStorage.removeItem("pds_user");
@@ -44,6 +49,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await api.post("/auth/logout");
     } finally {
+      localStorage.removeItem("pds_token");
       localStorage.removeItem("pds_user");
       setUser(null);
     }
