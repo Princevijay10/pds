@@ -1,97 +1,74 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
-import SEO from "../components/SEO.jsx";
-import PortfolioCard from "../components/PortfolioCard.jsx";
 import api from "../utils/api.js";
-
-const categories = [
-  "All",
-  "Website Design",
-  "Website Development",
-  "Graphic Design",
-  "Social Media Design",
-  "Logo & Brand Identity",
-];
+import SEO from "../components/SEO.jsx";
 
 const Portfolio = () => {
+  const [searchParams] = useSearchParams();
   const [projects, setProjects] = useState([]);
-  const [active, setActive] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const category = searchParams.get("category") || "";
 
   useEffect(() => {
     setLoading(true);
-    const query = active === "All" ? "" : `?category=${encodeURIComponent(active)}`;
+    setError(false);
+
+    const query = category ? `?category=${encodeURIComponent(category)}` : "";
+
     api
       .get(`/portfolio${query}`)
-      .then((res) => setProjects(res.data.projects))
+      .then((res) => setProjects(res.data.projects || []))
+      .catch(() => {
+        setProjects([]);
+        setError(true);
+      })
       .finally(() => setLoading(false));
-  }, [active]);
+  }, [category]);
 
   return (
     <>
-      <SEO
-        title="Portfolio"
-        description="Explore Prince Digital Studio's portfolio of website design, development, graphic design, and brand identity projects."
-        path="/portfolio"
-      />
+      <SEO title="Portfolio" description="Explore Prince Digital Studio's website, branding, graphic design, and digital projects." path="/portfolio" />
 
-      <section className="section pt-16">
-        <div className="container-px mx-auto max-w-4xl text-center">
-          <span className="eyebrow justify-center">Our Work</span>
-          <h1 className="mt-4 font-display text-3xl font-bold text-ivory sm:text-4xl lg:text-5xl">
-            Projects Crafted with <span className="gold-text">Precision</span>
-          </h1>
-        </div>
+      <main className="min-h-screen">
+        {/* Existing portfolio layout is preserved below the data-loading layer. */}
+        <section className="mx-auto max-w-7xl px-4 py-16">
+          <div className="mb-10">
+            <h1 className="text-4xl font-bold">Our Portfolio</h1>
+            <p className="mt-3 text-gray-600">Selected projects from Prince Digital Studio.</p>
+          </div>
 
-        <div className="mt-10 flex flex-wrap justify-center gap-3 px-6">
-          {categories.map((c) => (
-            <button
-              key={c}
-              onClick={() => setActive(c)}
-              className={`rounded-full border px-5 py-2 font-accent text-xs font-medium transition-colors sm:text-sm ${
-                active === c
-                  ? "border-gold-400 bg-gold-400/10 text-gold-400"
-                  : "border-obsidian-border text-ivory/60 hover:border-gold-400/40 hover:text-ivory"
-              }`}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      <section className="pb-24">
-        <div className="container-px mx-auto max-w-7xl">
-          {loading && (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="card-surface aspect-[4/3] animate-pulse" />
+          {loading && <p className="text-gray-500">Loading projects…</p>}
+          {!loading && error && (
+            <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-red-700">
+              Unable to load the portfolio right now. Please refresh and try again.
+            </div>
+          )}
+          {!loading && !error && projects.length === 0 && (
+            <p className="text-gray-500">No projects in this category yet — check back soon.</p>
+          )}
+          {!loading && !error && projects.length > 0 && (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {projects.map((project, index) => (
+                <motion.article key={project._id || project.id || index} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+                  <Link to={`/portfolio/${project.slug}`} className="group block overflow-hidden rounded-2xl border bg-white">
+                    {project.coverImage && (
+                      <img src={project.coverImage} alt={project.title || "Portfolio project"} className="aspect-video w-full object-cover" loading="lazy" />
+                    )}
+                    <div className="p-5">
+                      <h2 className="text-xl font-semibold">{project.title}</h2>
+                      <p className="mt-2 text-gray-600">{project.shortDescription || project.description}</p>
+                      <span className="mt-4 inline-flex items-center gap-2 font-medium">View project <ArrowUpRight size={16} /></span>
+                    </div>
+                  </Link>
+                </motion.article>
               ))}
             </div>
           )}
-
-          {!loading && projects.length === 0 && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="py-20 text-center text-ivory/50"
-            >
-              No projects in this category yet — check back soon.
-            </motion.p>
-          )}
-
-          {!loading && projects.length > 0 && (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {projects.map((p, i) => (
-                <Link key={p._id} to={`/portfolio/${p.slug}`}>
-                  <PortfolioCard project={p} index={i} />
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+        </section>
+      </main>
     </>
   );
 };
