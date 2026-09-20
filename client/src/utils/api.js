@@ -2,6 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "/api",
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
@@ -9,13 +10,8 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("pds_token");
-
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    // Let the browser/Axios set the multipart boundary for file uploads.
+    // Auth is carried by the server-managed HttpOnly cookie.
+    // Never copy credentials into JavaScript-accessible storage.
     if (typeof FormData !== "undefined" && config.data instanceof FormData) {
       delete config.headers["Content-Type"];
     }
@@ -28,13 +24,12 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem("pds_token");
-      localStorage.removeItem("pds_user");
-
-      if (window.location.pathname.startsWith("/admin")) {
-        window.location.href = "/admin/login";
-      }
+    if (
+      error.response?.status === 401 &&
+      window.location.pathname.startsWith("/admin") &&
+      !window.location.pathname.startsWith("/admin/login")
+    ) {
+      window.location.href = "/admin/login";
     }
 
     return Promise.reject(error);
