@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import SEO from "../components/SEO.jsx";
 import PortfolioCard from "../components/PortfolioCard.jsx";
@@ -38,7 +37,7 @@ const Portfolio = () => {
     <>
       <SEO
         title="Portfolio"
-        description="Explore Prince Digital Studio's portfolio of website design, development, graphic design, and brand identity projects."
+        description="Explore Prince Digital Studio's selected website and software projects."
         path="/portfolio"
       />
 
@@ -46,8 +45,11 @@ const Portfolio = () => {
         <div className="container-px mx-auto max-w-4xl text-center">
           <span className="eyebrow justify-center">Our Work</span>
           <h1 className="mt-4 font-display text-3xl font-bold text-ivory sm:text-4xl lg:text-5xl">
-            Projects Crafted with <span className="gold-text">Precision</span>
+            Selected <span className="gold-text">Projects</span>
           </h1>
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-ivory/50 sm:text-base">
+            A focused selection of websites and software projects built by Prince Digital Studio.
+          </p>
         </div>
 
         <div className="mt-10 flex flex-wrap justify-center gap-3 px-6">
@@ -71,7 +73,7 @@ const Portfolio = () => {
         <div className="container-px mx-auto max-w-7xl">
           {loading && (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {Array.from({ length: 6 }).map((_, i) => (
+              {Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="card-surface aspect-[4/3] animate-pulse" />
               ))}
             </div>
@@ -94,16 +96,14 @@ const Portfolio = () => {
               animate={{ opacity: 1 }}
               className="py-20 text-center text-ivory/50"
             >
-              No projects in this category yet — check back soon.
+              No projects in this category yet.
             </motion.p>
           )}
 
           {!loading && !error && projects.length > 0 && (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {projects.map((p, i) => (
-                <Link key={p._id} to={`/portfolio/${p.slug}`}>
-                  <PortfolioCard project={p} index={i} />
-                </Link>
+              {projects.slice(0, 3).map((project, i) => (
+                <PortfolioCard key={project._id || project.slug || project.title} project={project} index={i} />
               ))}
             </div>
           )}
