@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+<rect width="1200" height="800" fill="#080808"/>
+<rect x="48" y="48" width="1104" height="704" rx="32" fill="#111111" stroke="#C9A45C" stroke-opacity=".35"/>
+<text x="90" y="145" fill="#C9A45C" font-family="Arial,sans-serif" font-size="28" letter-spacing="6">PRINCE DIGITAL STUDIO</text>
+<text x="90" y="330" fill="#F5F2EA" font-family="Arial,sans-serif" font-size="82" font-weight="700">Prince Digital</text>
+<text x="90" y="425" fill="#F5F2EA" font-family="Arial,sans-serif" font-size="82" font-weight="700">Studio</text>
+<text x="92" y="500" fill="#9E9E9E" font-family="Arial,sans-serif" font-size="28">Business / Digital Studio Website</text>
+<path d="M92 575H420" stroke="#C9A45C" stroke-width="4"/>
+<text x="92" y="635" fill="#C9A45C" font-family="Arial,sans-serif" font-size="24" letter-spacing="4">DESIGN • DEVELOP • GROW</text>
+</svg>
