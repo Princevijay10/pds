@@ -22,6 +22,7 @@ import uploadRoutes from "./routes/uploadRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import pushRoutes from "./routes/pushRoutes.js";
 import siteSettingsRoutes from "./routes/siteSettingsRoutes.js";
+import { ensurePortfolioProjects } from "./seedPortfolio.js";
 
 dotenv.config();
 
@@ -45,8 +46,6 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Render sits behind a proxy. Keep this at one hop so rate limiting can
-// identify the real client IP without triggering Express's trust-proxy warning.
 app.set("trust proxy", 1);
 
 app.use(helmet({ crossOriginResourcePolicy: false }));
@@ -60,7 +59,6 @@ const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Same-origin/server-to-server requests have no Origin header.
       if (!origin || allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
@@ -88,9 +86,6 @@ const apiLimiter = rateLimit({
 app.use("/api", apiLimiter);
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-// Keep this endpoint independent of MongoDB. Render can use it to determine
-// whether the Node process is alive without making DB availability a deploy
-// blocker.
 app.get("/health", (req, res) => {
   res.status(200).json({
     success: true,
@@ -133,17 +128,14 @@ app.use(errorHandler);
 
 const PORT = Number(process.env.PORT) || 10000;
 
-// Render requires the public HTTP server to listen on all interfaces and on
-// the PORT it provides. Binding only to localhost can make a service appear
-// healthy locally while being unreachable through Render's proxy.
 app.listen(PORT, "0.0.0.0", () => {
   console.log(
     `Prince Digital Studio API listening on 0.0.0.0:${PORT} [${process.env.NODE_ENV || "development"}]`
   );
 });
 
-// DB connection is started after the HTTP server is listening so a transient
-// MongoDB/Atlas problem does not prevent Render from reaching /health.
-connectDB().catch((err) => {
-  console.error("Initial MongoDB connection failed:", err.message);
-});
+connectDB()
+  .then(() => ensurePortfolioProjects())
+  .catch((err) => {
+    console.error("Initial MongoDB connection/portfolio seed failed:", err.message);
+  });
