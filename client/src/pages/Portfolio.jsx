@@ -13,6 +13,12 @@ const categories = [
   "Logo & Brand Identity",
 ];
 
+const SELECTED_PROJECTS = [
+  "Prince Digital Studio",
+  "Rajasthan Shiksha Mahavidyalaya",
+  "ResumeGeniusAI",
+];
+
 const Portfolio = () => {
   const [projects, setProjects] = useState([]);
   const [active, setActive] = useState("All");
@@ -23,9 +29,15 @@ const Portfolio = () => {
     setLoading(true);
     setError(false);
     const query = active === "All" ? "" : `?category=${encodeURIComponent(active)}`;
+
     api
       .get(`/portfolio${query}`)
-      .then((res) => setProjects(res.data.projects || []))
+      .then((res) => {
+        const selected = (res.data.projects || [])
+          .filter((project) => SELECTED_PROJECTS.includes(project.title))
+          .sort((a, b) => SELECTED_PROJECTS.indexOf(a.title) - SELECTED_PROJECTS.indexOf(b.title));
+        setProjects(selected);
+      })
       .catch(() => {
         setProjects([]);
         setError(true);
@@ -80,29 +92,20 @@ const Portfolio = () => {
           )}
 
           {!loading && error && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="py-20 text-center text-red-300"
-              role="alert"
-            >
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-20 text-center text-red-300" role="alert">
               Unable to load the portfolio right now. Please refresh and try again.
             </motion.p>
           )}
 
           {!loading && !error && projects.length === 0 && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="py-20 text-center text-ivory/50"
-            >
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-20 text-center text-ivory/50">
               No projects in this category yet.
             </motion.p>
           )}
 
           {!loading && !error && projects.length > 0 && (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {projects.slice(0, 3).map((project, i) => (
+              {projects.map((project, i) => (
                 <PortfolioCard key={project._id || project.slug || project.title} project={project} index={i} />
               ))}
             </div>
