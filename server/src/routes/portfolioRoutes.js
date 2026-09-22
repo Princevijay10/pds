@@ -16,11 +16,63 @@ const PORTFOLIO_CATEGORIES = [
   "Other",
 ];
 
+const DEFAULT_PROJECTS = [
+  {
+    title: "Prince Digital Studio",
+    category: "Website Development",
+    description: "PDS की अपनी official website। इसमें modern UI, responsive design, services, portfolio और contact functionality है.",
+    coverImage: "/portfolio/prince-digital-studio.svg",
+    liveUrl: "https://princedigitalstudio.onrender.com/",
+    tags: ["React", "Node.js", "Express", "MongoDB", "Tailwind CSS"],
+    featured: true,
+    published: true,
+    order: 1,
+  },
+  {
+    title: "Rajasthan Shiksha Mahavidyalaya",
+    category: "Website Development",
+    description: "RSM के लिए institutional website, जिसमें college information, academics, activities, gallery और contact-related sections हैं.",
+    coverImage: "/portfolio/rsm.svg",
+    liveUrl: "https://rsmjaipur.page.gd/",
+    tags: ["HTML", "CSS", "JavaScript", "PHP", "Responsive Design"],
+    featured: true,
+    published: true,
+    order: 2,
+  },
+  {
+    title: "ResumeGeniusAI",
+    category: "Website Development",
+    description: "Resume बनाने, manage करने और career/job-related suggestions देने वाला full-stack project.",
+    coverImage: "/portfolio/resumegeniusai.svg",
+    liveUrl: "https://github.com/Princevijay10/resume-genius-ai",
+    tags: ["React", "Node.js", "Express", "MongoDB", "AI API"],
+    featured: true,
+    published: true,
+    order: 3,
+  },
+];
+
+const ensureDefaultProjects = async () => {
+  await Promise.all(
+    DEFAULT_PROJECTS.map((project) =>
+      Portfolio.updateOne(
+        { title: project.title },
+        { $set: project },
+        { upsert: true, runValidators: true }
+      )
+    )
+  );
+};
+
 const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
 const optionalUrl = (value) => value === undefined || value === null || value === "" || /^https?:\/\/[^\s]+$/i.test(value);
 
 router.get("/", async (req, res, next) => {
   try {
+    // Keep the public portfolio self-healing so deployment/startup timing or an
+    // empty MongoDB collection cannot leave the public page with only one card.
+    await ensureDefaultProjects();
+
     const { category, featured } = req.query;
     const filter = { published: true };
     if (typeof category === "string" && PORTFOLIO_CATEGORIES.includes(category)) filter.category = category;
