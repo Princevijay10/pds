@@ -16,11 +16,16 @@ const loginLimiter = rateLimit({
 });
 
 const COOKIE_NAME = "pds_token";
+
+// The client and API are deployed as separate Render services. In production
+// the auth cookie must be accepted on credentialed cross-origin API requests.
+// SameSite=None + Secure is required for this deployment topology.
 const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite: "lax",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   path: "/",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
 const signToken = (id) =>
@@ -65,7 +70,8 @@ router.post(
 
 // @route POST /api/auth/logout
 router.post("/logout", (req, res) => {
-  res.clearCookie(COOKIE_NAME, COOKIE_OPTIONS);
+  const { maxAge, ...clearCookieOptions } = COOKIE_OPTIONS;
+  res.clearCookie(COOKIE_NAME, clearCookieOptions);
   res.json({ success: true, message: "Logged out successfully" });
 });
 
