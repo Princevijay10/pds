@@ -48,18 +48,17 @@ const app = express();
 
 app.set("trust proxy", 1);
 
-app.use(helmet({ crossOriginResourcePolicy: false }));
-app.use(compression());
-
+// Normalize configured origins so an accidental trailing slash in Render's
+// CLIENT_URL does not break credentialed CORS requests.
 const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
   .split(",")
-  .map((origin) => origin.trim())
+  .map((origin) => origin.trim().replace(/\/$/, ""))
   .filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ""))) {
         return callback(null, true);
       }
       return callback(new Error("CORS origin not allowed"));
