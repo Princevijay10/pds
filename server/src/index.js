@@ -22,6 +22,7 @@ import uploadRoutes from "./routes/uploadRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import pushRoutes from "./routes/pushRoutes.js";
 import siteSettingsRoutes from "./routes/siteSettingsRoutes.js";
+import automationRoutes from "./routes/automationRoutes.js";
 import { ensurePortfolioProjects } from "./seedPortfolio.js";
 
 dotenv.config();
@@ -48,8 +49,6 @@ const app = express();
 
 app.set("trust proxy", 1);
 
-// Normalize configured origins so an accidental trailing slash in Render's
-// CLIENT_URL does not break credentialed CORS requests.
 const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
   .split(",")
   .map((origin) => origin.trim().replace(/\/$/, ""))
@@ -111,6 +110,7 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/push", pushRoutes);
 app.use("/api/site-settings", siteSettingsRoutes);
+app.use("/api/automation", automationRoutes);
 
 app.use("/api", notFound);
 
