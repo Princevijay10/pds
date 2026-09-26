@@ -6,8 +6,7 @@ import ServiceCard from "../components/ServiceCard.jsx";
 import { ArrowRight, Crown, Heart, Zap } from "lucide-react";
 import api from "../utils/api.js";
 
-const heroImage =
-  "https://images.unsplash.com/photo-1559028012-481c04fa7050?auto=format&fit=crop&w=1800&q=85";
+const heroImage = "/service-hero.svg";
 
 const Services = () => {
   const [services, setServices] = useState([]);
@@ -35,10 +34,10 @@ const Services = () => {
         <img
           src={heroImage}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover opacity-35"
+          className="absolute inset-0 h-full w-full object-cover opacity-45"
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-obsidian via-obsidian/90 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-obsidian via-obsidian/80 to-transparent" />
 
         <div className="container-px relative mx-auto grid max-w-7xl items-center gap-10 py-20 sm:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:py-28">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
@@ -72,11 +71,14 @@ const Services = () => {
             transition={{ duration: 0.6 }}
             className="hidden lg:block"
           >
-            <div className="relative overflow-hidden rounded-2xl border border-gold-400/25 shadow-2xl">
+            <div className="relative overflow-hidden rounded-2xl border border-gold-400/25 bg-obsidian-surface shadow-2xl">
               <img
                 src={heroImage}
                 alt="Premium digital design workspace"
                 className="aspect-[5/4] w-full object-cover"
+                onError={(event) => {
+                  event.currentTarget.style.display = "none";
+                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-5 left-5 rounded-xl border border-gold-400/30 bg-black/65 px-4 py-3 backdrop-blur">
