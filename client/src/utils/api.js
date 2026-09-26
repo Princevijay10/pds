@@ -1,7 +1,12 @@
 import axios from "axios";
 
+// Production uses the dedicated Render API service. VITE_API_URL can still
+// override this for local/staging environments.
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "https://pds-server-s06a.onrender.com/api";
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "/api",
+  baseURL: API_BASE_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -10,8 +15,6 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    // Auth is carried by the server-managed HttpOnly cookie.
-    // Never copy credentials into JavaScript-accessible storage.
     if (typeof FormData !== "undefined" && config.data instanceof FormData) {
       delete config.headers["Content-Type"];
     }
