@@ -125,8 +125,8 @@ const buildPosterSvg = ({ date, occasion }) => {
   <circle cx="170" cy="430" r="190" fill="#f2b84b" opacity=".16"/>
 
   <rect x="0" y="0" width="1080" height="112" fill="#b71c1c"/>
-  <text x="540" y="50" text-anchor="middle" font-family="Noto Sans Devanagari, sans-serif" font-size="39" font-weight="800" fill="#fff">पंडित रामजीलााल शास्त्री संगीत संस्थान</text>
-  <text x="540" y="88" text-anchor="middle" font-family="Noto Sans Devanagari, sans-serif" font-size="22" font-weight="600" fill="#ffe9b0">पं. रामजीलााल शास्त्री मार्ग, ब्रह्मपुरी, जयपुर</text>
+  <text x="540" y="50" text-anchor="middle" font-family="Noto Sans Devanagari, sans-serif" font-size="39" font-weight="800" fill="#fff">पंडित रामजीलाल शास्त्री संगीत संस्थान</text>
+  <text x="540" y="88" text-anchor="middle" font-family="Noto Sans Devanagari, sans-serif" font-size="22" font-weight="600" fill="#ffe9b0">पं. रामजीलाल शास्त्री मार्ग, ब्रह्मपुरी, जयपुर</text>
 
   <rect x="40" y="132" width="1000" height="72" rx="18" fill="url(#blue)"/>
   <text x="540" y="179" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="800" fill="#fff">REGISTRATION OPEN</text>
