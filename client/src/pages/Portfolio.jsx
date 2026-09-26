@@ -19,6 +19,54 @@ const SELECTED_PROJECTS = [
   "ResumeGeniusAI",
 ];
 
+const FALLBACK_PROJECTS = [
+  {
+    _id: "pds-fallback",
+    title: "Prince Digital Studio",
+    category: "Website Development",
+    description: "Prince Digital Studio official website with modern UI, responsive design, services, portfolio and contact functionality.",
+    coverImage: "/portfolio/prince-digital-studio.svg",
+    liveUrl: "https://princedigitalstudio.onrender.com/",
+    tags: ["React", "Node.js", "Express", "MongoDB", "Tailwind CSS"],
+    featured: true,
+    published: true,
+    order: 1,
+  },
+  {
+    _id: "rsm-fallback",
+    title: "Rajasthan Shiksha Mahavidyalaya",
+    category: "Website Development",
+    description: "Institutional website project with college information, academics, activities, gallery and contact sections.",
+    coverImage: "/portfolio/rsm.svg",
+    liveUrl: "https://rsmjaipur.page.gd/",
+    tags: ["HTML", "CSS", "JavaScript", "PHP", "Responsive Design"],
+    featured: true,
+    published: true,
+    order: 2,
+  },
+  {
+    _id: "resume-fallback",
+    title: "ResumeGeniusAI",
+    category: "Website Development",
+    description: "Full-stack resume builder and career assistance project with resume management and AI-powered suggestions.",
+    coverImage: "/portfolio/resumegeniusai.svg",
+    liveUrl: "https://github.com/Princevijay10/resume-genius-ai",
+    tags: ["React", "Node.js", "Express", "MongoDB", "AI API"],
+    featured: true,
+    published: true,
+    order: 3,
+  },
+];
+
+const filterProjects = (projects, active) => {
+  const selected = projects
+    .filter((project) => SELECTED_PROJECTS.includes(project.title))
+    .filter((project) => active === "All" || project.category === active)
+    .sort((a, b) => SELECTED_PROJECTS.indexOf(a.title) - SELECTED_PROJECTS.indexOf(b.title));
+
+  return selected;
+};
+
 const Portfolio = () => {
   const [projects, setProjects] = useState([]);
   const [active, setActive] = useState("All");
@@ -33,14 +81,13 @@ const Portfolio = () => {
     api
       .get(`/portfolio${query}`)
       .then((res) => {
-        const selected = (res.data.projects || [])
-          .filter((project) => SELECTED_PROJECTS.includes(project.title))
-          .sort((a, b) => SELECTED_PROJECTS.indexOf(a.title) - SELECTED_PROJECTS.indexOf(b.title));
-        setProjects(selected);
+        const apiProjects = res.data.projects || [];
+        setProjects(filterProjects(apiProjects, active));
       })
       .catch(() => {
-        setProjects([]);
-        setError(true);
+        const fallback = filterProjects(FALLBACK_PROJECTS, active);
+        setProjects(fallback);
+        setError(false);
       })
       .finally(() => setLoading(false));
   }, [active]);
